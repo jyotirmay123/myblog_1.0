@@ -96,11 +96,17 @@ On the flip side the popularity of this project is expected to be huge. As it is
     - npm install
 <b>Configure server.js and start the app</b>
     - npm start
+<b>Configure Angular2 </b>
+    - update node and npm to 5.X.X and 3.X.X or higher version
+    - Use <strong>npm install npm -g</strong> for npm and <strong>npm install -g n </strong> then <em> sudo n latest</em> for node.
+
 </pre>
 
 <b>Important Links </b>
 
 <ul>
 <li> http://rogerdudler.github.io/git-guide/ </li>
+<li> https://angular.io/docs/ts/latest/quickstart.html </li>
+
 
 </ul>
