@@ -90,16 +90,9 @@ On the flip side the popularity of this project is expected to be huge. As it is
 <b>Setup</b>
 
 <pre>
-<b>Install mean-cli</b>
-    - sudo npm install -g mean-cli
-<b>Create myblog app</b>
-    - mean init myblog
-<b>Setup newly created app - myblog</b>
-    <u>for server side dependency</u>
-    - cd myblog && npm install
-    <u>for client side dependency</u>
-    If not triggered automatically in previous step than run it manually.
-    - bower install
-<b>Run the app - myblog</b>
-    - run or gulp
+<b>Install node, git</b>
+<b>Install required npm packages </b>
+    - npm install
+<b>Configure server.js and start the app</b>
+    - npm start
 </pre>
