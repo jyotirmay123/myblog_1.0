@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-
-=======
 			   		                
->>>>>>> bbc3f3bd631c82e4c83b9c329d3228a775cbfd00
 <b>blog.jyotirmaysenapati.com</b>
 
 MyBlog is my own project. I believe sharing knowledge and keeping memories of your day to day life is precious. To accommodate both the things a self created blogging website is a best deal. 
@@ -89,25 +85,21 @@ For now, i am the only target audience for this project. I am building this for 
 As this is an open source project the market potential for it makes no sense. There are no financial motivations behind building this project. The main motivation is experimentation and developing a world class piece of MEAN stack based blog engine. 
 On the flip side the popularity of this project is expected to be huge. As it is a javascript full stack application, the responsive UI and fast performance will attract many readers/bloggers towards it.
 
-<<<<<<< HEAD
 <b>Designing</b>
 
 <b>Setup</b>
 
 <pre>
 <b>Install mean-cli</b>
-- sudo npm install -g mean-cli
+    - sudo npm install -g mean-cli
 <b>Create myblog app</b>
-- mean init myblog
+    - mean init myblog
 <b>Setup newly created app - myblog</b>
-<u>for server side dependency</u>
-- cd myblog && npm install
-<u>for client side dependency</u>
-If not triggered automatically in previous step than run it manually.
-- bower install
+    <u>for server side dependency</u>
+    - cd myblog && npm install
+    <u>for client side dependency</u>
+    If not triggered automatically in previous step than run it manually.
+    - bower install
 <b>Run the app - myblog</b>
-- run or gulp
+    - run or gulp
 </pre>
-=======
-
->>>>>>> bbc3f3bd631c82e4c83b9c329d3228a775cbfd00
