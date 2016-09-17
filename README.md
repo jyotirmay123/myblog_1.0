@@ -85,6 +85,7 @@ For now, i am the only target audience for this project. I am building this for 
 As this is an open source project the market potential for it makes no sense. There are no financial motivations behind building this project. The main motivation is experimentation and developing a world class piece of MEAN stack based blog engine. 
 On the flip side the popularity of this project is expected to be huge. As it is a javascript full stack application, the responsive UI and fast performance will attract many readers/bloggers towards it.
 
+
 <b>Designing</b>
 
 <b>Setup</b>
@@ -96,3 +97,10 @@ On the flip side the popularity of this project is expected to be huge. As it is
 <b>Configure server.js and start the app</b>
     - npm start
 </pre>
+
+<b>Important Links </b>
+
+<ul>
+<li> http://rogerdudler.github.io/git-guide/ </li>
+
+</ul>
