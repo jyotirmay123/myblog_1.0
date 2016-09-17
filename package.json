@@ -1,0 +1,28 @@
+{
+  "name": "myblog",
+  "description": "MyBlog: A MEAN Powered blog engine.",
+  "version": "0.0.1",
+  "private": false,
+  "author": "Jyotirmay <mail@jyotirmaysenapati.com>",
+  "contributors": "",
+  "mean": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jyotirmay123/myblog.git"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node server"
+  },
+  "dependencies": {
+    "express": "latest",
+    "compression": "latest",
+    "serve-favicon": "latest",
+    "path": "latest"
+  },
+  "devDependencies": {
+    
+  },
+  "snyk": true
+}
+
