@@ -9,15 +9,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+require('./rxjs-operators');
+var app_service_1 = require('./app.service');
+//import { Http } from '@angular/http';
+//import {FormsModule} from '@angular/forms';
+//import {blogFormModule} from './blogForm.class';
 var AppComponent = (function () {
-    function AppComponent() {
+    function AppComponent(blogService) {
+        this.blogService = blogService;
+        this.mode = 'Promise';
     }
+    AppComponent.prototype.ngOnInit = function () { this.getBlog(); };
+    AppComponent.prototype.getBlog = function () {
+        var _this = this;
+        this.blogService.getBlog()
+            .then(function (blog) { return _this.blogs = blog; }, function (error) { return _this.errorMessage = error; });
+    };
+    AppComponent.prototype.addBlog = function (name) {
+        var _this = this;
+        if (!name) {
+            return;
+        }
+        this.blogService.addBlog(name)
+            .then(function (blog) { return _this.blogs.push(blog); }, function (error) { return _this.errorMessage = error; });
+    };
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: '<h1>My First Angular 2 App</h1>'
-        }), 
-        __metadata('design:paramtypes', [])
+            templateUrl: 'app/templates/write-blog.html',
+            providers: [app_service_1.BlogService]
+        } /*,
+        {
+          selector: 'my-app',
+          templateUrl: 'app/templates/blogForm.html'
+        }*/), 
+        __metadata('design:paramtypes', [app_service_1.BlogService])
     ], AppComponent);
     return AppComponent;
 }());

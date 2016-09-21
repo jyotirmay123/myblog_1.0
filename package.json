@@ -15,14 +15,16 @@
     "start": "node server"
   },
   "dependencies": {
-    "express": "latest",
     "compression": "latest",
-    "serve-favicon": "latest",
-    "path": "latest"
+    "express": "latest",
+    "ng2-ckeditor": "^1.0.7",
+    "path": "latest",
+    "pmx": "^0.6.5",
+    "serve-favicon": "latest"
   },
   "devDependencies": {
-    
+    "del": "^2.2.2",
+    "gulp": "^3.9.1"
   },
   "snyk": true
 }
-

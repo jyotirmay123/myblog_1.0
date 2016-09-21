@@ -10,13 +10,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
+var forms_1 = require('@angular/forms');
+var ng2_ckeditor_1 = require('ng2-ckeditor');
+var http_1 = require('@angular/http');
+var angular2_in_memory_web_api_1 = require('angular2-in-memory-web-api');
+var blogData_1 = require('./blogData');
 var app_component_1 = require('./app.component');
+//import { blogFormModule } from './blogForm.class'
 var AppModule = (function () {
     function AppModule() {
     }
     AppModule = __decorate([
         core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule],
+            imports: [platform_browser_1.BrowserModule, forms_1.FormsModule, ng2_ckeditor_1.CKEditorModule, http_1.HttpModule,
+                http_1.JsonpModule,
+                angular2_in_memory_web_api_1.InMemoryWebApiModule.forRoot(blogData_1.BlogData)],
             declarations: [app_component_1.AppComponent],
             bootstrap: [app_component_1.AppComponent]
         }), 
