@@ -98,7 +98,7 @@ On the flip side the popularity of this project is expected to be huge. As it is
     - npm start
 <b>Configure Angular2 </b>
     - update node and npm to 5.X.X and 3.X.X or higher version
-    - Use <strong>npm install npm -g</strong> for npm and <strong>npm install -g n </strong> then <em> sudo n latest</em> for node.
+    - Use <strong>npm install npm -g</strong> for npm and <strong>npm install -g n </strong> then <strong> sudo n latest</strong> for node.
 
 </pre>
 
