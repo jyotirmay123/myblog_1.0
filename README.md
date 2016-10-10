@@ -1,4 +1,5 @@
 			   		                
+<b><u>MyBlog Project Synopsis</u></b></br>
 <b>blog.jyotirmaysenapati.com</b>
 
 MyBlog is my own project. I believe sharing knowledge and keeping memories of your day to day life is precious. To accommodate both the things a self created blogging website is a best deal. 
@@ -88,25 +89,40 @@ On the flip side the popularity of this project is expected to be huge. As it is
 
 <b>Designing</b>
 
-<b>Setup</b>
+<b><u>Setup</u></b>
 
 <pre>
-<b>Install node, git</b>
-<b>Install required npm packages </b>
-    - npm install
-<b>Configure server.js and start the app</b>
-    - npm start
+<b>Follow below URLs to install and configure node, git, mongodb and cordova</b>
+	- <a href="https://nodejs.org/en/">Node JS</a>
+	- <a href="https://git-scm.com/">Git</a>
+	- <a href="https://www.mongodb.com/">mongodb</a>
+	- <a href="https://cordova.apache.org/docs/en/latest/guide/cli/">cordova</a>
+	
+<b>Fetch the app</b>
+	- git clone https://github.com/jyotirmay123/myblog_1.0.git
+	
 <b>Configure Angular2 </b>
-    - update node and npm to 5.X.X and 3.X.X or higher version
-    - Use <strong>npm install npm -g</strong> for npm and <strong>npm install -g n </strong> then <strong> sudo n latest</strong> for node.
+	- update node and npm to 5.X.X and 3.X.X or higher version.
+	- Use <strong>npm install npm -g</strong> for npm and <strong>npm install -g n </strong> then <strong> sudo n latest</strong> for node.
+	
+<b>Guide to start the app</b>
+	- Go to <b>myblog</b> project folder by running <b>cd myblog</b> in command prompt.
+	- npm install
+	- start local database by running <b>mongod</b> in command prompt.
+	- start the server by running <b>npm start</b> in another command prompt.
+	- Go to <b>UI</b> folder by running <b>cd UI</b>.
+	- Run <b>npm install</b> and <b>npm start</b> to install UI dependencies and run the UI app respectively.
+	- Take the content of "app" folder inside "UI" and put it in "cordova/www/".
+	- Use <b>cordova built android</b> and <b>cordova built ios </b>to generate ".apk" and ".ica" file for mobile 		  platform.
 
 </pre>
 
-<b>Important Links </b>
+<b>Other Important Links </b>
 
 <ul>
 <li> http://rogerdudler.github.io/git-guide/ </li>
 <li> https://angular.io/docs/ts/latest/quickstart.html </li>
+<li> http://stackoverflow.com/users/3861545/jyotirmay </li>
 
 
 </ul>
