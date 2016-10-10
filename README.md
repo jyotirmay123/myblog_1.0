@@ -106,7 +106,7 @@ On the flip side the popularity of this project is expected to be huge. As it is
 	- Use <strong>npm install npm -g</strong> for npm and <strong>npm install -g n </strong> then <strong> sudo n latest</strong> for node.
 	
 <b>Guide to start the app</b>
-	- Go to <b>myblog</b> project folder by running <b>cd myblog</b> in command prompt.
+	- Go to <b>myblog</b> project folder by running <b>cd myblog_1.0</b> in command prompt.
 	- npm install
 	- start local database by running <b>mongod</b> in command prompt.
 	- start the server by running <b>npm start</b> in another command prompt.
