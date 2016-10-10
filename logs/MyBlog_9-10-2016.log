@@ -1,0 +1,35 @@
+[06:46:20] [[31mERROR[39m] - { Error: connect ECONNREFUSED 127.0.0.1:27017
+    at Object.exports._errnoException (util.js:1036:11)
+    at exports._exceptionWithHostPort (util.js:1059:20)
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1080:14)
+  name: 'MongoError',
+  message: 'connect ECONNREFUSED 127.0.0.1:27017' }
+
+[06:46:41] [[32m INFO[39m] - Connected to Database.
+
+[06:46:41] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[06:47:02] [[32m INFO[39m] - Connected to Database.
+
+[06:47:02] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[06:47:06] [[32m INFO[39m] - Connected to Database.
+
+[06:47:06] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[06:49:54] [[32m INFO[39m] - Connected to Database.
+
+[06:49:54] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[06:51:39] [[32m INFO[39m] - Connected to Database.
+
+[06:51:39] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[06:53:16] [[32m INFO[39m] - Connected to Database.
+
+[06:53:16] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[06:54:39] [[32m INFO[39m] - Connected to Database.
+
+[06:54:39] [[32m INFO[39m] - *** Welcome to MyBlog ***
+

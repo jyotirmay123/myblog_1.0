@@ -1,30 +1,57 @@
 {
-  "name": "myblog",
-  "description": "MyBlog: A MEAN Powered blog engine.",
-  "version": "0.0.1",
-  "private": false,
-  "author": "Jyotirmay <mail@jyotirmaysenapati.com>",
-  "contributors": "",
-  "mean": "0.0.1",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jyotirmay123/myblog.git"
-  },
-  "license": "UNLICENSED",
+  "name": "MyBlogServer",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "start": "node server"
+    "start": "nodemon server.js",
+    "test": "istanbul cover _mocha -- -R spec --recursive test",
+    "coveralls": "npm run test -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
-    "compression": "latest",
-    "express": "latest",
-    "ng2-ckeditor": "^1.0.7",
-    "path": "latest",
-    "pmx": "^0.6.5",
-    "serve-favicon": "latest"
+    "async": "~1.5.0",
+    "aws-sdk": "~2.2.23",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "~1.13.2",
+    "chai": "^3.4.1",
+    "cluster": "^0.7.7",
+    "cookie-parser": "~1.3.5",
+    "cors": "~2.7.1",
+    "coveralls": "^2.11.4",
+    "debug": "~2.2.0",
+    "express": "~4.13.1",
+    "express-ping": "^1.1.0",
+    "hbs": "~3.1.1",
+    "istanbul": "^0.4.0",
+    "jsonwebtoken": "^5.4.1",
+    "log4js": "~0.6.27",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
+    "mongo-healthcheck": "^2.0.1",
+    "mongoosastic": "^3.6.0",
+    "mongoose": "~4.1.11",
+    "mongoose-auto-increment": "~5.0.1",
+    "mongoose-id-validator": "~0.1.8",
+    "mongoose-pagination": "^1.0.0",
+    "mongoose-paginator": "^0.2.5",
+    "mongoose-unique-validator": "~0.5.1",
+    "mongoose-validator": "~1.2.4",
+    "morgan": "~1.6.1",
+    "node-uuid": "~1.4.7",
+    "nodemon": "^1.8.1",
+    "passport": "~0.3.0",
+    "proxy-agent": "~2.0.0",
+    "rrule": "^2.1.0",
+    "serve-favicon": "~2.3.0",
+    "socket.io": "^1.3.7",
+    "superagent": "^1.4.0"
   },
   "devDependencies": {
-    "del": "^2.2.2",
-    "gulp": "^3.9.1"
-  },
-  "snyk": true
+    "chai": "^3.4.1",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
+    "request": "^2.67.0",
+    "superagent": "^1.4.0"
+  }
 }

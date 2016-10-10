@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <base href="/">
+    <title>My-Blog</title>
+    <meta charset="UTF-8">
+    <!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+    <meta name="google-signin-client_id" content="262592278939-o872ps4ghp4qqaclou2qseim89tdjjd0.apps.googleusercontent.com">
+
+    <link href="app/images/myblog.ico" rel="icon" type="image/x-icon" />
+    <link rel="stylesheet" href="app/css/app.css">
+    <!-- 1. Load libraries -->
+     <!-- Polyfill(s) for older browsers -->
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="//cdn.ckeditor.com/4.5.6/standard/ckeditor.js"></script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+    <!--script src="https://connect.facebook.net/en_GB/sdk.js%23xfbml=1&version=v2.7&appId=1834265296843281" id="facebook-jssdk"></script>
+    <!--script src="https://apis.google.com/js/plusone.js"></script-->
+
+    <!-- 2. Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <!--script>
+      (function(h,e,a,t,m,p) {
+      m=e.createElement(a);m.async=!0;m.src=t;
+      p=e.getElementsByTagName(a)[0];p.parentNode.insertBefore(m,p);
+      })(window,document,'script','https://u.heatmap.it/log.js');
+    </script-->
+    <script>
+      System.import('app').catch(function(err){ console.error(err); });
+    </script>
+ 
+  </head>
+  <!-- 3. Display the application -->
+  <body>
+    <!--div id="comments"></div>
+    <script>
+      gapi.comments.render("comments", {
+          href: window.location,
+          width: '624',
+          first_party_property: 'BLOGGER',
+          view_type: 'FILTERED_POSTMOD'
+      });
+    </script-->
+<my-app></my-app>
+ <div id="fb-root"></div>
+<!--div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=1834265296843281";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<div class="fb-comments" data-href="https://www.facebook.com/SenapatiJyotirmay/" data-width="900" data-numposts="3">
+</div-->
+  </body>
+</html>
