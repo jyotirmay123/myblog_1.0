@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <base href="/">
@@ -7,7 +8,9 @@
     <meta name="google-signin-client_id" content="262592278939-o872ps4ghp4qqaclou2qseim89tdjjd0.apps.googleusercontent.com">
 
     <link href="app/images/myblog.ico" rel="icon" type="image/x-icon" />
-    <link rel="stylesheet" href="app/css/app.css">
+    <link rel="stylesheet" type="css/text" href="app/css/app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+
     <!-- 1. Load libraries -->
      <!-- Polyfill(s) for older browsers -->
     <script src="node_modules/core-js/client/shim.min.js"></script>
@@ -16,7 +19,8 @@
     <script src="node_modules/systemjs/dist/system.src.js"></script>
     <script src="//cdn.ckeditor.com/4.5.6/standard/ckeditor.js"></script>
     <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
-    <!--script src="https://connect.facebook.net/en_GB/sdk.js%23xfbml=1&version=v2.7&appId=1834265296843281" id="facebook-jssdk"></script>
+    
+    <!--script src="https://connect.facebook.net/en_GB/sdk.js%23xfbml=1&version=v2.7&appId=1834265296843281" id="facebook-jssdk"></script-->
     <!--script src="https://apis.google.com/js/plusone.js"></script-->
 
     <!-- 2. Configure SystemJS -->
@@ -33,7 +37,8 @@
  
   </head>
   <!-- 3. Display the application -->
-  <body>
+  <body style="background-color : lightgrey;
+  text-align: center">
     <!--div id="comments"></div>
     <script>
       gapi.comments.render("comments", {
@@ -43,7 +48,8 @@
           view_type: 'FILTERED_POSTMOD'
       });
     </script-->
-<my-app></my-app>
+<my-app><i class="fa fa-spinner fa-pulse fa-5x"></i>
+</my-app>
  <div id="fb-root"></div>
 <!--div id="fb-root"></div>
 <script>(function(d, s, id) {

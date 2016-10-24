@@ -1,19 +1,119 @@
 /* Master Styles */
-h1 {
-  color: #369;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 250%;
-  background-color: greenyellow;
+* {
+  margin: 0px;
+  padding: 0px;
 }
-h2, h3 {
-  color: #444;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: lighter;
+
+/*.base_body {
+  background-color : lightgrey;
+  text-align: center;
+}*/
+
+#base_center {
+  width:80%;
+  text-align: left;
+  background-color : white;
+  margin:10px auto;
 }
-body {
-  margin: 2em;
+
+#page_header {
+  background-color: lightblue;
+  color: red;
 }
-img {
+
+#logo {
+  display: inline;
+  padding: 5px 2px 10px 10px;
+  /* Top, Right, Bottom, Left*/
+  vertical-align: middle;
+}
+
+#tag_line {
+  display: inline;
+  font-family: Impact;
+  font-size: 40px;
+  font-weight: bolder;
+}
+
+#page_nav{
+  background-color: black;
+}
+
+#page_nav ul{
+  list-style-type: none;
+}
+
+#page_nav a {
+  color: white;
+}
+
+#page_nav li {
+  display: inline;
+  padding: 10px;
+}
+
+#left_aside {
+  background-color: palegreen;
+  width:15%;
+  float:left;
   height: 100%;
-  width: 100%;
+}
+
+#left_aside ul{
+  list-style-type: none;
+}
+
+#left_aside a {
+  color: black;
+}
+
+#left_aside li {
+ /* display: inline; */
+  padding: 10px;
+}
+
+#main_section{
+
+  background-color: white;
+vertical-align: center;
+
+  height: auto;
+  margin: 20px;
+  padding: 15px;
+  align-content: center;
+}
+
+.main_article{
+  background-color: rgb(198, 255, 255);
+  float: left;
+  padding: 10px;
+  border: 2px solid black;
+  width:240px;
+  height:150px;
+}
+
+.main_article header{
+  background-color: yellow;
+}
+
+.main_article footer{
+  background-color: grey;
+  color: red;
+}
+
+#page_footer{
+  clear:both;
+  background-color: grey;
+  text-align: center;
+}
+
+#comment_section{
+  align-content: center;
+}
+
+.social_group{
+  float: right;
+  padding: 5px 2px 10px 10px;
+  /* Top, Right, Bottom, Left*/
+  vertical-align: middle;
 }

@@ -124,10 +124,12 @@ var AuthApp = (function () {
                     _this.userAuthToken = loggedInUser.getAuthResponse().id_token;
                     _this.userDisplayName = loggedInUser.getBasicProfile().getName();
                     _this.isLoggedIn = true;
+                    localStorage.setItem('sess', 'true');
                 }
                 else {
                     _this.signOut();
                     _this.isLoggedIn = false;
+                    localStorage.setItem('sess', 'false');
                 }
             });
         };
@@ -138,6 +140,7 @@ var AuthApp = (function () {
         this.userAuthToken = null;
         this.userDisplayName = "empty";
         this.isLoggedIn = false;
+        localStorage.setItem('sess', 'false');
     };
     // Angular hook that allows for interaction with elements inserted by the
     // rendering of a view.
@@ -149,10 +152,14 @@ var AuthApp = (function () {
             "theme": "dark"
         });
     };
+    AuthApp.prototype.getIsLoggedIn = function () {
+        return this.isLoggedIn;
+    };
     AuthApp = __decorate([
         core_1.Component({
             selector: "loginWithGoogle",
-            template: "\n    <div class=\"login-wrapper\">\n      <div id=\"{{googleLoginButtonId}}\"></div> \n    </div>\n    \n    <div class=\"main-application\">\n      <p>Hello, {{userDisplayName}}!</p>\n    </div>\n    "
+            styleUrls: ['app/css/login.css'],
+            templateUrl: 'app/template/login.htm'
         }), 
         __metadata('design:paramtypes', [core_1.NgZone])
     ], AuthApp);
@@ -168,10 +175,14 @@ var ckeditorClass = (function () {
     function ckeditorClass() {
         this.blogContent = "<p>Hello</p>";
     }
+    ckeditorClass.prototype.blogSubmit = function () {
+        alert("getting clicked. Backend not configured");
+    };
     ckeditorClass = __decorate([
         core_1.Component({
             selector: 'ckeditorForm',
-            template: "\n        <ckeditor [(ngModel)]=\"blogContent\" debounce=\"500\"><p>Hello</p></ckeditor>\n        <div [innerHTML]=\"blogContent\"></div>  "
+            styleUrls: ['app/css/blog.css'],
+            templateUrl: "app/template/blog.htm"
         }), 
         __metadata('design:paramtypes', [])
     ], ckeditorClass);
@@ -270,7 +281,7 @@ var FacebookCommentComponent = (function () {
     FacebookCommentComponent = __decorate([
         core_1.Component({
             selector: 'facebookComment',
-            template: "\n    <div id=\"{{fbCommentID}}\">\n     \n      <div class=\"fb-comments\" data-href=\"https://www.facebook.com/SenapatiJyotirmay/\" data-width=\"900\" data-numposts=\"3\">\n      </div>\n    </div>\n  "
+            template: "\n    <div id=\"{{fbCommentID}}\"> \n      <div class=\"fb-comments\" data-href=\"https://www.facebook.com/SenapatiJyotirmay/\" data-width=\"900\" data-numposts=\"3\">\n      </div>\n    </div>\n  "
         }),
         __param(0, core_1.Inject(platform_browser_1.DOCUMENT)), 
         __metadata('design:paramtypes', [Object, core_1.NgZone, router_1.Router, core_1.Renderer, core_1.ElementRef])
@@ -284,17 +295,21 @@ exports.FacebookCommentComponent = FacebookCommentComponent;
  *
  */
 var NewBlogComponent = (function () {
-    function NewBlogComponent(ckeditorclass) {
+    function NewBlogComponent(ckeditorclass, router) {
         this.ckeditorclass = ckeditorclass;
+        this.router = router;
         // Property to hold blog content.
         this.blogContent = 'Start Blogging';
+        if (!localStorage.getItem('sess')) {
+            this.router.navigate(['/blog/Login']);
+        }
     }
     NewBlogComponent = __decorate([
         core_1.Component({
             providers: [myBlogService, ckeditorClass /*,AuthApp*/],
             template: "\n    <ckeditorForm></ckeditorForm>\n  "
         }), 
-        __metadata('design:paramtypes', [ckeditorClass])
+        __metadata('design:paramtypes', [ckeditorClass, router_1.Router])
     ], NewBlogComponent);
     return NewBlogComponent;
 }());
@@ -327,10 +342,14 @@ exports.BlogComponent = BlogComponent;
  *
  */
 var BlogListComponent = (function () {
-    function BlogListComponent(myblogservice) {
+    function BlogListComponent(myblogservice, router) {
         this.myblogservice = myblogservice;
+        this.router = router;
         // Property to hold blog data
         this.getResponse = [{ "blogger": "coming soon", "age": "" }, { "blogger": "hello" }];
+        if (!localStorage.getItem('sess')) {
+            this.router.navigate(['/blog/Login']);
+        }
     }
     // check function to check control is going to service
     BlogListComponent.prototype.check = function () {
@@ -349,7 +368,7 @@ var BlogListComponent = (function () {
             styleUrls: ['app/css/app.css'],
             template: "\n    <h1 (click)= check()>My First Angular 2 App</h1>\n    <button (click)=get()>Get My Name</button>\n    <h1 *ngFor= \"let res of getResponse\">{{res.blogger}}</h1>\n  "
         }), 
-        __metadata('design:paramtypes', [myBlogService])
+        __metadata('design:paramtypes', [myBlogService, router_1.Router])
     ], BlogListComponent);
     return BlogListComponent;
 }());
@@ -360,18 +379,27 @@ exports.BlogListComponent = BlogListComponent;
  *
  */
 var BlogHomeComponent = (function () {
-    //commentId : string = "comments";
-    function BlogHomeComponent() {
+    function BlogHomeComponent(router) {
+        this.router = router;
+        //commentId : string = "comments";
+        this.loggedIn = "false";
+        if (!localStorage.getItem('sess')) {
+            this.router.navigate(['/blog/Login']);
+        }
+        this.loggedIn = localStorage.getItem('sess');
+        console.log("coming here");
+        console.log(localStorage.getItem("sess"));
+        this.router.navigate(['/blog/new']);
         //this.embedComment();
     }
     BlogHomeComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            providers: [myBlogService, ckeditorClass /*,AuthApp*/],
+            providers: [myBlogService, ckeditorClass, AuthApp],
             styleUrls: ['app/css/app.css'],
-            template: "\n    <loginWithGoogle></loginWithGoogle>\n    <h1>Angular Router</h1>\n      <nav>\n        <a routerLink=\"blog\" routerLinkActive=\"active\">Home</a>\n        <a routerLink=\"blog/new\">New Blog</a>\n        <a routerLink=\"blogc\">Sample Blog</a>\n        <a routerLink=\"blog/Contact\">Contact Me</a>\n      </nav>\n    <router-outlet></router-outlet>\n    <!--div id=\"{{commentId}}\"></div-->\n  "
+            templateUrl: 'app/template/base.htm'
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [router_1.Router])
     ], BlogHomeComponent);
     return BlogHomeComponent;
 }());
@@ -409,7 +437,7 @@ var appRoutes = [
             title: 'New Blog'
         }
     },
-    { path: 'blogc', component: BlogComponent },
+    { path: 'blog/Login', component: AuthApp },
     { path: '', component: BlogHomeComponent },
     { path: '**', component: BlogNotFoundComponent }
 ];

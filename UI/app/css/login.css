@@ -1,0 +1,10 @@
+.login-wrapper{
+  background-color: white;
+  width: 20%;
+  margin: 10px auto;
+  vertical-align: center;
+}
+
+#comment_section {
+    display: none;
+}

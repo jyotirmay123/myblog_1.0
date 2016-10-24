@@ -110,15 +110,8 @@ declare let gapi:any;
 
 @Component({
     selector: "loginWithGoogle",
-    template: `
-    <div class="login-wrapper">
-      <div id="{{googleLoginButtonId}}"></div> 
-    </div>
-    
-    <div class="main-application">
-      <p>Hello, {{userDisplayName}}!</p>
-    </div>
-    `
+    styleUrls: ['app/css/login.css'],
+    templateUrl: 'app/template/login.htm'
 })
 export class AuthApp {
 
@@ -126,7 +119,7 @@ export class AuthApp {
 
   userAuthToken : any;
   userDisplayName : string;
-  isLoggedIn: boolean;
+  public isLoggedIn: boolean;
 
   constructor(private _zone: NgZone) {
     this.default();
@@ -137,6 +130,7 @@ export class AuthApp {
    this.userAuthToken = null;
    this.userDisplayName = "empty";
    this.isLoggedIn = false;
+   localStorage.setItem('sess', 'false');
  }
 
 // Signout from Application and resetting values to default.
@@ -160,7 +154,10 @@ export class AuthApp {
         "scope": "profile",
         "theme": "dark"
       });
+  }
 
+  getIsLoggedIn() : boolean{
+    return this.isLoggedIn;
   }
 
   // Triggered after a user successfully logs in using the Google external
@@ -171,9 +168,13 @@ export class AuthApp {
         this.userAuthToken = loggedInUser.getAuthResponse().id_token;
         this.userDisplayName = loggedInUser.getBasicProfile().getName();
         this.isLoggedIn = true;
+        localStorage.setItem('sess', 'true');
+
       } else {
         this.signOut();
         this.isLoggedIn = false;
+        localStorage.setItem('sess', 'false');
+
       }
     });
   }
@@ -186,9 +187,8 @@ export class AuthApp {
  */
 @Component({
   selector: 'ckeditorForm',
-  template: `
-        <ckeditor [(ngModel)]="blogContent" debounce="500"><p>Hello</p></ckeditor>
-        <div [innerHTML]="blogContent"></div>  `
+  styleUrls:['app/css/blog.css'],
+  templateUrl: `app/template/blog.htm`
 })
 export class ckeditorClass {
 
@@ -197,6 +197,10 @@ export class ckeditorClass {
 
   constructor(){
     this.blogContent="<p>Hello</p>";
+  }
+
+  blogSubmit() {
+    alert("getting clicked. Backend not configured");
   }
 }
 
@@ -242,8 +246,7 @@ declare let FB : any;
 @Component({
   selector: 'facebookComment',
   template: `
-    <div id="{{fbCommentID}}">
-     
+    <div id="{{fbCommentID}}"> 
       <div class="fb-comments" data-href="https://www.facebook.com/SenapatiJyotirmay/" data-width="900" data-numposts="3">
       </div>
     </div>
@@ -340,7 +343,11 @@ export class NewBlogComponent{
   // Property to hold blog content.
   public blogContent = 'Start Blogging';
   
-  constructor(public ckeditorclass : ckeditorClass){}
+  constructor(public ckeditorclass : ckeditorClass, protected router:Router){
+    if (!localStorage.getItem('sess')) {
+      this.router.navigate(['/blog/Login']);
+    }
+  }
 
 }
 
@@ -383,7 +390,11 @@ export class BlogListComponent {
    // Property to hold blog data
   public getResponse = [{"blogger": "coming soon", "age": ""}, {"blogger": "hello"}];
   
-  constructor(protected myblogservice : myBlogService){}
+  constructor(protected myblogservice : myBlogService, protected router:Router){
+    if (!localStorage.getItem('sess')) {
+      this.router.navigate(['/blog/Login']);
+    }
+  }
   
   // check function to check control is going to service
   check() {
@@ -405,26 +416,23 @@ export class BlogListComponent {
  */
 @Component({
   selector: 'my-app',
-  providers: [myBlogService, ckeditorClass /*,AuthApp*/],
+  providers: [myBlogService, ckeditorClass, AuthApp],
   styleUrls: ['app/css/app.css'],
-  template: `
-    <loginWithGoogle></loginWithGoogle>
-    <h1>Angular Router</h1>
-      <nav>
-        <a routerLink="blog" routerLinkActive="active">Home</a>
-        <a routerLink="blog/new">New Blog</a>
-        <a routerLink="blogc">Sample Blog</a>
-        <a routerLink="blog/Contact">Contact Me</a>
-      </nav>
-    <router-outlet></router-outlet>
-    <!--div id="{{commentId}}"></div-->
-  `
+  templateUrl: 'app/template/base.htm'
 })
 export class BlogHomeComponent {
 
   //commentId : string = "comments";
-
-  constructor() {
+  loggedIn : String = "false";
+ 
+  constructor(protected router: Router) {
+    if (!localStorage.getItem('sess')) {
+      this.router.navigate(['/blog/Login']);
+    }
+    this.loggedIn = localStorage.getItem('sess');
+    console.log("coming here");
+    console.log(localStorage.getItem("sess"));
+    this.router.navigate(['/blog/new']);
     //this.embedComment();
   }
 
@@ -470,7 +478,7 @@ const appRoutes: Routes = [
       title: 'New Blog'
     }
   },
-  { path: 'blogc', component: BlogComponent },
+  { path: 'blog/Login', component: AuthApp},
   { path: '', component: BlogHomeComponent },
   { path: '**', component: BlogNotFoundComponent }
 ];
