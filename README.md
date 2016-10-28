@@ -1,4 +1,6 @@
 			   		                
+<!-- @author: Jyotirmay Senapati, @Date: 31st August, 2016 -->
+
 <b><u>MyBlog Project Synopsis</u></b></br>
 <b>blog.jyotirmaysenapati.com</b>
 

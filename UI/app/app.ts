@@ -25,10 +25,10 @@ import { Routes, RouterModule, Router, ActivatedRoute, Params } from '@angular/r
 import { BrowserModule, DOCUMENT } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { FormsModule } from '@angular/forms';
-import 'rxjs/add/operator/map';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 
+import 'rxjs/add/operator/map';
 
 // Other ng-modules
 import { CKEditorModule } from 'ng2-ckeditor';
@@ -41,12 +41,31 @@ import { CKEditorModule } from 'ng2-ckeditor';
  */
 export class CONFIG {
 
-  private __version__: any;
-  protected _gapiURL: any;
-  protected _fbAPPID: any;
+  // APPLICATION VERSION
+  protected __version__: any = "1.0.0";
+
+  // Local/Development config
+  public _gapiURL: any;
+  public _serverUrl: string = "http://127.0.0.1:3000";
+  protected _fbAPPID: number = 1834265296843281;
   protected _authTOKEN: any;
-  protected _fbCOMMENTURI: any;
-  constructor() { }
+  public _fbSDKURL: string = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=" + this._fbAPPID;
+  public static sess: any = [];
+
+  // Production config
+  /*
+  public _gapiURL: any; 
+  public _serverUrl : string = "http://myblog-jms.c9users.io:8080";
+  protected _fbAPPID: number;
+  protected _authTOKEN: any;
+  public _fbSDKURL: string;
+ 
+  */
+
+  constructor() {
+    CONFIG.sess.isLoggedIn = localStorage.getItem("isLoggedIn") || false;
+    CONFIG.sess.username = localStorage.getItem("username") || "Hi Guest";
+  }
 
 }
 
@@ -65,10 +84,14 @@ export class CONFIG {
 export class MyBlogService {
 
   // Property to hold root server URL i.e host
-  //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
-  private serverUrl: string = "http://127.0.0.1:3000"
+  private serverUrl: string;
+  private serviceUrl: string = '/blog';
 
-  constructor(private http: Http) { }
+  constructor(private http: Http, protected $c: CONFIG) {
+    this.serverUrl = $c._serverUrl;
+    console.log(CONFIG.sess.isLoggedIn);
+    console.log(CONFIG.sess);
+  }
 
   // check function in service to check control is coming to service
   check() {
@@ -78,35 +101,35 @@ export class MyBlogService {
   // get function to get data from server
   // basically blog datas
   get(): Observable<any> {
-    return this.http.get(this.serverUrl + "/blog")
+    return this.http.get(this.serverUrl + this.serviceUrl)
       .map(response => response.json());
   }
 
   getById(_id): Observable<any> {
-    return this.http.get(this.serverUrl + "/blog/" + _id)
+    return this.http.get(this.serverUrl + this.serviceUrl + "/" + _id)
       .map(response => response.json());
   }
   // add blog to database server
   add(blog: any): Observable<any> {
-    return this.http.post(this.serverUrl + "/blog", blog)
+    return this.http.post(this.serverUrl + this.serviceUrl, blog)
       .map(response => response.json());
   }
 
   // Update the content of blog with an ID in the database server
   update(blog: any): Observable<any> {
-    return this.http.put(this.serverUrl + "/blog", blog)
+    return this.http.put(this.serverUrl + this.serviceUrl, blog)
       .map(response => response.json());
   }
 
   // Delete a blog with an ID from database server
   delete(_id: any): Observable<any> {
-    return this.http.delete(this.serverUrl + "/blog/" + _id)
+    return this.http.delete(this.serverUrl + this.serviceUrl + "/" + _id)
       .map(response => response.json())
   }
 
   // Delete all blog from database server [PROHIBITED]
   deleteAll(): Observable<any> {
-    return this.http.delete(this.serverUrl + "/blog")
+    return this.http.delete(this.serverUrl + this.serviceUrl)
       .map(response => response.json());
   }
 
@@ -126,10 +149,31 @@ export class MyBlogService {
 export class UserSessionService {
 
   // Property to hold root server URL i.e host
-  //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
-  private serverUrl: string = "http://127.0.0.1:3000"
+  private serverUrl: string;
+  private serviceUrl: string = "/user";
+  private anotherServiceUrl: string = "/login";
 
-  constructor(private http: Http) { }
+  constructor(private http: Http, protected $c: CONFIG) {
+    this.serverUrl = $c._serverUrl;
+  }
+
+  // Add loggedin user info to database
+  addUserInfo(user): Observable<any> {
+    return this.http.post(this.serverUrl + this.serviceUrl, user)
+      .map(response => response.json());
+  }
+
+  // Get User details from databse
+  getUserInfo(): Observable<any> {
+    return this.http.get(this.serverUrl + this.serviceUrl)
+      .map(response => response.json());
+  }
+
+  // Save each and every session into database for future data analytics purpose
+  addUserSession(session): Observable<any> {
+    return this.http.post(this.serverUrl + this.anotherServiceUrl, session)
+      .map(response => response.json());
+  }
 }
 
 //############################################################################################################//
@@ -168,6 +212,7 @@ declare let gapi: any;
 @Component({
   selector: "loginWithGoogle",
   styleUrls: ['app/css/login.css'],
+  providers: [UserSessionService],
   templateUrl: 'app/template/login.htm'
 })
 export class AuthApp {
@@ -179,30 +224,43 @@ export class AuthApp {
   public isLoggedIn: boolean;
 
   constructor(private _zone: NgZone) {
-    this.default();
+    //console.log();
+    //this.update();
   }
 
-  // Function to reset class values to default.
-  default() {
-    this.userAuthToken = null;
-    this.userDisplayName = "empty";
-    this.isLoggedIn = false;
-    localStorage.setItem('sess', 'false');
+  // Function to update class values to updated config values .
+  update() {
+    //this.userAuthToken = null;
+    this.userDisplayName = CONFIG.sess.username;
+    this.isLoggedIn = CONFIG.sess.isLoggedIn;
+
   }
+
+  ngOnInit() { 
+    console.log(CONFIG.sess.isLoggedIn + CONFIG.sess.username);
+    this.update();
+    console.log(this.isLoggedIn + this.userDisplayName)
+  }    
 
   // Signout from Application and resetting values to default.
   signOut = () => {
     this._zone.run(() => {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
+        CONFIG.sess.splice(0, 1);
+        CONFIG.sess.isLoggedIn = false;
+        localStorage.setItem("isLoggedIn", CONFIG.sess.isLoggedIn);
+        CONFIG.sess.username = "Hi Guest";
+        localStorage.setItem("username", CONFIG.sess.username);
       });
-      this.default();
+      setTimeout(() => this.update(), 1000);
     });
   }
 
   // Angular hook that allows for interaction with elements inserted by the
   // rendering of a view.
   ngAfterViewInit() {
+    this.update();
     // Converts the Google login button stub to an actual button.
     gapi.signin2.render(
       this.googleLoginButtonId,
@@ -221,17 +279,17 @@ export class AuthApp {
   // login provider.
   onGoogleLoginSuccess = (loggedInUser) => {
     this._zone.run(() => {
-      if (!this.isLoggedIn) {
-        this.userAuthToken = loggedInUser.getAuthResponse().id_token;
-        this.userDisplayName = loggedInUser.getBasicProfile().getName();
-        this.isLoggedIn = true;
-        localStorage.setItem('sess', 'true');
-      } else {
-        this.signOut();
-        this.isLoggedIn = false;
-        localStorage.setItem('sess', 'false');
-      }
+      console.log(loggedInUser);
+      CONFIG.sess.push(loggedInUser);
+      CONFIG.sess.isLoggedIn = true;
+      localStorage.setItem("isLoggedIn", CONFIG.sess.isLoggedIn);
+      //this.userAuthToken = loggedInUser.getAuthResponse().id_token;
+      CONFIG.sess.username = loggedInUser.getBasicProfile().getName();
+      localStorage.setItem("username", CONFIG.sess.username );
+
+      console.log(CONFIG.sess);
     });
+    setTimeout(() => this.update(), 2000);
   }
 }
 
@@ -257,7 +315,11 @@ export class FacebookCommentComponent {
   protected childNode;
   public fbCommentID: any;
 
-  constructor( @Inject(DOCUMENT) private document: any, private _zone: NgZone, protected router: Router, public r: Renderer, public el: ElementRef) {
+  constructor( @Inject(DOCUMENT) private document: any, private _zone: NgZone, protected router: Router,
+    public r: Renderer, public el: ElementRef, protected $c: CONFIG) {
+    if (!CONFIG.sess.isLoggedIn) {
+      this.router.navigate(['/blog/login']);
+    }
     this.fbCommentID = "fbCommentId";
     this.loadFBCommentAPI(this.document, 'script', 'facebook-jssdk');
   }
@@ -288,7 +350,7 @@ export class FacebookCommentComponent {
       }
       this.js = d.createElement(s);
       this.js.id = id;
-      this.js.src = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=1834265296843281";
+      this.js.src = this.$c._fbSDKURL;
       this.childNode = this.fjs.parentNode.insertBefore(this.js, this.fjs);
     });
   }
@@ -315,7 +377,11 @@ export class NewBlogComponent {
   public blogId: any = 0;
   private subscription: Subscription;
 
-  constructor(protected myblogservice: MyBlogService, protected router: Router, protected route: ActivatedRoute) { }
+  constructor(protected myblogservice: MyBlogService, protected router: Router, protected route: ActivatedRoute) {
+    if (!CONFIG.sess.isLoggedIn) {
+      this.router.navigate(['/blog/login']);
+    }
+  }
 
   ngOnInit() {
     this.subscription = this.route.params.subscribe(
@@ -336,6 +402,7 @@ export class NewBlogComponent {
     this.blog = this.myblogservice.prepareJSON(this.blogcontent);
     this.myblogservice.add(this.blog).subscribe(data => {
       this.isSuccess = true;
+      this.router.navigate(['/blog']);
     },
       err => {
         this.isSuccess = false;
@@ -348,6 +415,7 @@ export class NewBlogComponent {
     this.blog = this.myblogservice.prepareJSON(this.blogcontent, this.blogId);
     this.myblogservice.update(this.blog).subscribe(data => {
       this.isSuccess = true;
+      this.router.navigate(['/blog']);
     },
       err => {
         this.isSuccess = false;
@@ -370,7 +438,10 @@ export class BlogSampleComponent {
   public blogs = [];
   public _id = 40;
 
-  constructor(protected myblogservice: MyBlogService) {
+  constructor(protected myblogservice: MyBlogService, protected router: Router) {
+    if (!CONFIG.sess.isLoggedIn) {
+      this.router.navigate(['/blog/login']);
+    }
     this.getOne();
   }
 
@@ -401,6 +472,9 @@ export class BlogListComponent {
   public idRange = { minRange: 0, maxRange: 100 }
 
   constructor(protected myblogservice: MyBlogService, protected router: Router, protected zone: NgZone) {
+    if (!CONFIG.sess.isLoggedIn) {
+      this.router.navigate(['/blog/login']);
+    }
     this.get();
   }
 
@@ -457,7 +531,9 @@ export class BlogHomeComponent {
   public loggedIn: String = "false";
 
   constructor(protected router: Router) {
-    this.router.navigate(['/blog/new']);
+    if (!CONFIG.sess.isLoggedIn) {
+      this.router.navigate(['/blog/login']);
+    }
   }
 }
 
@@ -558,7 +634,7 @@ let declarationArr: Array<any> = [
 @NgModule({
   imports: [BrowserModule, HttpModule, CKEditorModule, FormsModule, routing],
   declarations: declarationArr,
-  providers: [{ provide: LocationStrategy, useClass: PathLocationStrategy }, appRoutingProviders],
+  providers: [{ provide: LocationStrategy, useClass: PathLocationStrategy }, appRoutingProviders, CONFIG],
   bootstrap: [BlogHomeComponent]
 })
 export class app { }

@@ -1,3 +1,9 @@
+/**
+ * 
+ * @Author: Jyotirmay
+ * @Date: 26th September, 2016
+ * 
+ */
 {
   "compilerOptions": {
     "target": "es5",

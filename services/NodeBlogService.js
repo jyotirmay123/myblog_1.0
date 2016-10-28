@@ -50,7 +50,7 @@ var NodeBlogService = {
 				next(null, blog);
 			}
 			else {
-				next({ message: 'No blog Found with blogId: ' + id });
+				next({ message: 'No blog found with blogId: ' + id });
 			}
 		});
 	},

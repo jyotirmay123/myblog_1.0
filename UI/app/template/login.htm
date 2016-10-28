@@ -1,6 +1,9 @@
- `
-      <div class="login-wrapper">
-        <div id="{{googleLoginButtonId}}"></div> 
-        <p>Hello, {{userDisplayName}}!</p>
-      </div>
-    `
+<!-- @author: Jyotirmay Senapati, @Date: 28th October, 2016, @Description: Login html file -->
+
+<div class="login-wrapper">
+	<div id="{{googleLoginButtonId}}"></div>
+	<p>Hello, {{userDisplayName}}!</p>
+</div>
+<div>
+	<button *ngIf="isLoggedIn" (click)=signOut() >LogOut</button>
+</div>

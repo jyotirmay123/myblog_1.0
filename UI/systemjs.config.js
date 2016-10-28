@@ -1,6 +1,10 @@
 /**
- * System configuration for Angular 2 samples
- * Adjust as necessary for your application needs.
+ * 
+ * @Author: Jyotirmay
+ * @Date: 26th September, 2016
+ * 
+ * System configuration for Angular 2 Application
+ * 
  */
 (function (global) {
   System.config({

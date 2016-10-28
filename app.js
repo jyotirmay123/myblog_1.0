@@ -1,3 +1,8 @@
+/**
+*@author :: Jyotirmay
+*@Date :: 25th Sep, 2016
+*/
+
 var express = require('express');
 var cors = require('cors');
 var path = require('path');
@@ -18,6 +23,8 @@ var config = require("./config");
 // My Blog apis
 var NodeIndexRoute = require('./routes/NodeIndexRoute');
 var NodeBlogRoute = require('./routes/NodeBlogRoute');
+var NodeLoginRoute = require('./routes/NodeLoginRoute');
+var NodeUserRoute = require('./routes/NodeUserRoute');
 
 //logger config
 var log4js = require('log4js');
@@ -134,6 +141,8 @@ app.use(cookieParser());
 // qc routing
 app.use('/', NodeIndexRoute);
 app.use('/blog', NodeBlogRoute);
+app.use('/login', NodeLoginRoute);
+app.use('/user', NodeUserRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

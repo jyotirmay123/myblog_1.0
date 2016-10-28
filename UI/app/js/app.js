@@ -44,8 +44,25 @@ var ng2_ckeditor_1 = require('ng2-ckeditor');
  *
  */
 var CONFIG = (function () {
+    // Production config
+    /*
+    public _gapiURL: any;
+    public _serverUrl : string = "http://myblog-jms.c9users.io:8080";
+    protected _fbAPPID: number;
+    protected _authTOKEN: any;
+    public _fbSDKURL: string;
+   
+    */
     function CONFIG() {
+        // APPLICATION VERSION
+        this.__version__ = "1.0.0";
+        this._serverUrl = "http://127.0.0.1:3000";
+        this._fbAPPID = 1834265296843281;
+        this._fbSDKURL = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=" + this._fbAPPID;
+        CONFIG.sess.isLoggedIn = localStorage.getItem("isLoggedIn") || false;
+        CONFIG.sess.username = localStorage.getItem("username") || "Hi Guest";
     }
+    CONFIG.sess = [];
     return CONFIG;
 }());
 exports.CONFIG = CONFIG;
@@ -61,11 +78,13 @@ exports.CONFIG = CONFIG;
  *
  */
 var MyBlogService = (function () {
-    function MyBlogService(http) {
+    function MyBlogService(http, $c) {
         this.http = http;
-        // Property to hold root server URL i.e host
-        //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
-        this.serverUrl = "http://127.0.0.1:3000";
+        this.$c = $c;
+        this.serviceUrl = '/blog';
+        this.serverUrl = $c._serverUrl;
+        console.log(CONFIG.sess.isLoggedIn);
+        console.log(CONFIG.sess);
     }
     // check function in service to check control is coming to service
     MyBlogService.prototype.check = function () {
@@ -74,31 +93,31 @@ var MyBlogService = (function () {
     // get function to get data from server
     // basically blog datas
     MyBlogService.prototype.get = function () {
-        return this.http.get(this.serverUrl + "/blog")
+        return this.http.get(this.serverUrl + this.serviceUrl)
             .map(function (response) { return response.json(); });
     };
     MyBlogService.prototype.getById = function (_id) {
-        return this.http.get(this.serverUrl + "/blog/" + _id)
+        return this.http.get(this.serverUrl + this.serviceUrl + "/" + _id)
             .map(function (response) { return response.json(); });
     };
     // add blog to database server
     MyBlogService.prototype.add = function (blog) {
-        return this.http.post(this.serverUrl + "/blog", blog)
+        return this.http.post(this.serverUrl + this.serviceUrl, blog)
             .map(function (response) { return response.json(); });
     };
     // Update the content of blog with an ID in the database server
     MyBlogService.prototype.update = function (blog) {
-        return this.http.put(this.serverUrl + "/blog", blog)
+        return this.http.put(this.serverUrl + this.serviceUrl, blog)
             .map(function (response) { return response.json(); });
     };
     // Delete a blog with an ID from database server
     MyBlogService.prototype.delete = function (_id) {
-        return this.http.delete(this.serverUrl + "/blog/" + _id)
+        return this.http.delete(this.serverUrl + this.serviceUrl + "/" + _id)
             .map(function (response) { return response.json(); });
     };
     // Delete all blog from database server [PROHIBITED]
     MyBlogService.prototype.deleteAll = function () {
-        return this.http.delete(this.serverUrl + "/blog")
+        return this.http.delete(this.serverUrl + this.serviceUrl)
             .map(function (response) { return response.json(); });
     };
     // structure it so that databse will accept this to store i.e. here in our case modify the data to JSON.
@@ -110,7 +129,7 @@ var MyBlogService = (function () {
     };
     MyBlogService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, CONFIG])
     ], MyBlogService);
     return MyBlogService;
 }());
@@ -121,15 +140,31 @@ exports.MyBlogService = MyBlogService;
  *
  */
 var UserSessionService = (function () {
-    function UserSessionService(http) {
+    function UserSessionService(http, $c) {
         this.http = http;
-        // Property to hold root server URL i.e host
-        //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
-        this.serverUrl = "http://127.0.0.1:3000";
+        this.$c = $c;
+        this.serviceUrl = "/user";
+        this.anotherServiceUrl = "/login";
+        this.serverUrl = $c._serverUrl;
     }
+    // Add loggedin user info to database
+    UserSessionService.prototype.addUserInfo = function (user) {
+        return this.http.post(this.serverUrl + this.serviceUrl, user)
+            .map(function (response) { return response.json(); });
+    };
+    // Get User details from databse
+    UserSessionService.prototype.getUserInfo = function () {
+        return this.http.get(this.serverUrl + this.serviceUrl)
+            .map(function (response) { return response.json(); });
+    };
+    // Save each and every session into database for future data analytics purpose
+    UserSessionService.prototype.addUserSession = function (session) {
+        return this.http.post(this.serverUrl + this.anotherServiceUrl, session)
+            .map(function (response) { return response.json(); });
+    };
     UserSessionService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, CONFIG])
     ], UserSessionService);
     return UserSessionService;
 }());
@@ -166,39 +201,48 @@ var AuthApp = (function () {
             _this._zone.run(function () {
                 var auth2 = gapi.auth2.getAuthInstance();
                 auth2.signOut().then(function () {
+                    CONFIG.sess.splice(0, 1);
+                    CONFIG.sess.isLoggedIn = false;
+                    localStorage.setItem("isLoggedIn", CONFIG.sess.isLoggedIn);
+                    CONFIG.sess.username = "Hi Guest";
+                    localStorage.setItem("username", CONFIG.sess.username);
                 });
-                _this.default();
+                setTimeout(function () { return _this.update(); }, 1000);
             });
         };
         // Triggered after a user successfully logs in using the Google external
         // login provider.
         this.onGoogleLoginSuccess = function (loggedInUser) {
             _this._zone.run(function () {
-                if (!_this.isLoggedIn) {
-                    _this.userAuthToken = loggedInUser.getAuthResponse().id_token;
-                    _this.userDisplayName = loggedInUser.getBasicProfile().getName();
-                    _this.isLoggedIn = true;
-                    localStorage.setItem('sess', 'true');
-                }
-                else {
-                    _this.signOut();
-                    _this.isLoggedIn = false;
-                    localStorage.setItem('sess', 'false');
-                }
+                console.log(loggedInUser);
+                CONFIG.sess.push(loggedInUser);
+                CONFIG.sess.isLoggedIn = true;
+                localStorage.setItem("isLoggedIn", CONFIG.sess.isLoggedIn);
+                //this.userAuthToken = loggedInUser.getAuthResponse().id_token;
+                CONFIG.sess.username = loggedInUser.getBasicProfile().getName();
+                localStorage.setItem("username", CONFIG.sess.username);
+                console.log(CONFIG.sess);
             });
+            setTimeout(function () { return _this.update(); }, 2000);
         };
-        this.default();
+        //console.log();
+        //this.update();
     }
-    // Function to reset class values to default.
-    AuthApp.prototype.default = function () {
-        this.userAuthToken = null;
-        this.userDisplayName = "empty";
-        this.isLoggedIn = false;
-        localStorage.setItem('sess', 'false');
+    // Function to update class values to updated config values .
+    AuthApp.prototype.update = function () {
+        //this.userAuthToken = null;
+        this.userDisplayName = CONFIG.sess.username;
+        this.isLoggedIn = CONFIG.sess.isLoggedIn;
+    };
+    AuthApp.prototype.ngOnInit = function () {
+        console.log(CONFIG.sess.isLoggedIn + CONFIG.sess.username);
+        this.update();
+        console.log(this.isLoggedIn + this.userDisplayName);
     };
     // Angular hook that allows for interaction with elements inserted by the
     // rendering of a view.
     AuthApp.prototype.ngAfterViewInit = function () {
+        this.update();
         // Converts the Google login button stub to an actual button.
         gapi.signin2.render(this.googleLoginButtonId, {
             "onSuccess": this.onGoogleLoginSuccess,
@@ -213,6 +257,7 @@ var AuthApp = (function () {
         core_1.Component({
             selector: "loginWithGoogle",
             styleUrls: ['app/css/login.css'],
+            providers: [UserSessionService],
             templateUrl: 'app/template/login.htm'
         }), 
         __metadata('design:paramtypes', [core_1.NgZone])
@@ -221,13 +266,14 @@ var AuthApp = (function () {
 }());
 exports.AuthApp = AuthApp;
 var FacebookCommentComponent = (function () {
-    function FacebookCommentComponent(document, _zone, router, r, el) {
+    function FacebookCommentComponent(document, _zone, router, r, el, $c) {
         var _this = this;
         this.document = document;
         this._zone = _zone;
         this.router = router;
         this.r = r;
         this.el = el;
+        this.$c = $c;
         this.loadFBCommentAPI = function (d, s, id) {
             _this._zone.run(function () {
                 _this.js, _this.fjs = d.getElementsByTagName(s)[0];
@@ -237,10 +283,13 @@ var FacebookCommentComponent = (function () {
                 }
                 _this.js = d.createElement(s);
                 _this.js.id = id;
-                _this.js.src = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=1834265296843281";
+                _this.js.src = _this.$c._fbSDKURL;
                 _this.childNode = _this.fjs.parentNode.insertBefore(_this.js, _this.fjs);
             });
         };
+        if (!CONFIG.sess.isLoggedIn) {
+            this.router.navigate(['/blog/login']);
+        }
         this.fbCommentID = "fbCommentId";
         this.loadFBCommentAPI(this.document, 'script', 'facebook-jssdk');
     }
@@ -259,7 +308,7 @@ var FacebookCommentComponent = (function () {
             template: "\n    <div id=\"{{fbCommentID}}\"> \n      <div class=\"fb-comments\" data-href=\"https://www.facebook.com/SenapatiJyotirmay/\" data-width=\"900\" data-numposts=\"3\">\n      </div>\n    </div>\n  "
         }),
         __param(0, core_1.Inject(platform_browser_1.DOCUMENT)), 
-        __metadata('design:paramtypes', [Object, core_1.NgZone, router_1.Router, core_1.Renderer, core_1.ElementRef])
+        __metadata('design:paramtypes', [Object, core_1.NgZone, router_1.Router, core_1.Renderer, core_1.ElementRef, CONFIG])
     ], FacebookCommentComponent);
     return FacebookCommentComponent;
 }());
@@ -275,6 +324,9 @@ var NewBlogComponent = (function () {
         this.router = router;
         this.route = route;
         this.blogId = 0;
+        if (!CONFIG.sess.isLoggedIn) {
+            this.router.navigate(['/blog/login']);
+        }
     }
     NewBlogComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -293,6 +345,7 @@ var NewBlogComponent = (function () {
         this.blog = this.myblogservice.prepareJSON(this.blogcontent);
         this.myblogservice.add(this.blog).subscribe(function (data) {
             _this.isSuccess = true;
+            _this.router.navigate(['/blog']);
         }, function (err) {
             _this.isSuccess = false;
         });
@@ -304,6 +357,7 @@ var NewBlogComponent = (function () {
         this.blog = this.myblogservice.prepareJSON(this.blogcontent, this.blogId);
         this.myblogservice.update(this.blog).subscribe(function (data) {
             _this.isSuccess = true;
+            _this.router.navigate(['/blog']);
         }, function (err) {
             _this.isSuccess = false;
         });
@@ -326,10 +380,14 @@ exports.NewBlogComponent = NewBlogComponent;
  *
  */
 var BlogSampleComponent = (function () {
-    function BlogSampleComponent(myblogservice) {
+    function BlogSampleComponent(myblogservice, router) {
         this.myblogservice = myblogservice;
+        this.router = router;
         this.blogs = [];
         this._id = 40;
+        if (!CONFIG.sess.isLoggedIn) {
+            this.router.navigate(['/blog/login']);
+        }
         this.getOne();
     }
     // Get a particular blog with matched ID.
@@ -346,7 +404,7 @@ var BlogSampleComponent = (function () {
             styleUrls: ['app/css/blog.css'],
             templateUrl: "app/template/sampleBlog.htm"
         }), 
-        __metadata('design:paramtypes', [MyBlogService])
+        __metadata('design:paramtypes', [MyBlogService, router_1.Router])
     ], BlogSampleComponent);
     return BlogSampleComponent;
 }());
@@ -364,6 +422,9 @@ var BlogListComponent = (function () {
         // Property to hold blog data
         this.blogs = [];
         this.idRange = { minRange: 0, maxRange: 100 };
+        if (!CONFIG.sess.isLoggedIn) {
+            this.router.navigate(['/blog/login']);
+        }
         this.get();
     }
     // check function to check control is going to service
@@ -420,7 +481,9 @@ var BlogHomeComponent = (function () {
     function BlogHomeComponent(router) {
         this.router = router;
         this.loggedIn = "false";
-        this.router.navigate(['/blog/new']);
+        if (!CONFIG.sess.isLoggedIn) {
+            this.router.navigate(['/blog/login']);
+        }
     }
     BlogHomeComponent = __decorate([
         core_1.Component({
@@ -546,7 +609,7 @@ var app = (function () {
         core_1.NgModule({
             imports: [platform_browser_1.BrowserModule, http_1.HttpModule, ng2_ckeditor_1.CKEditorModule, forms_1.FormsModule, routing],
             declarations: declarationArr,
-            providers: [{ provide: common_1.LocationStrategy, useClass: common_1.PathLocationStrategy }, appRoutingProviders],
+            providers: [{ provide: common_1.LocationStrategy, useClass: common_1.PathLocationStrategy }, appRoutingProviders, CONFIG],
             bootstrap: [BlogHomeComponent]
         }), 
         __metadata('design:paramtypes', [])
