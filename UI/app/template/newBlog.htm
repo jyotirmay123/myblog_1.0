@@ -3,8 +3,7 @@
 </ckeditor>
 <div class="button_class">
 	<button *ngIf="blogId==0" id="blog_submit" (click)=addBlog()>Submit</button>
-	<button *ngIf="blogId!=0" id="blog_submit" (click)=updateBlog()>Update</button>
-
+	<button *ngIf="blogId!=0" id="blog_update" (click)=updateBlog()>Update</button>
 </div>
 
 <!--div [innerHTML]="blogContent"></div-->

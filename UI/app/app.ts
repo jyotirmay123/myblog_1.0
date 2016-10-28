@@ -16,7 +16,7 @@
  * 
  */
 import {
-  Component, NgModule, Injectable, Inject, NgZone,
+  Component, NgModule, Injectable, Inject, NgZone, Pipe, PipeTransform,
   ModuleWithProviders, OnInit, Directive, ElementRef, Input, Renderer
 } from '@angular/core';
 import { PathLocationStrategy, LocationStrategy } from '@angular/common';
@@ -26,7 +26,9 @@ import { BrowserModule, DOCUMENT } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { FormsModule } from '@angular/forms';
 import 'rxjs/add/operator/map';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+
 
 // Other ng-modules
 import { CKEditorModule } from 'ng2-ckeditor';
@@ -54,8 +56,13 @@ export class CONFIG {
  * My Sevices
  * 
  */
+/**
+ * 
+ * blogService to deal with CRUD operations related to blog 
+ * 
+ */
 @Injectable()
-export class myBlogService {
+export class MyBlogService {
 
   // Property to hold root server URL i.e host
   //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
@@ -75,35 +82,54 @@ export class myBlogService {
       .map(response => response.json());
   }
 
+  getById(_id): Observable<any> {
+    return this.http.get(this.serverUrl + "/blog/" + _id)
+      .map(response => response.json());
+  }
   // add blog to database server
-  add(blog: any) {
+  add(blog: any): Observable<any> {
     return this.http.post(this.serverUrl + "/blog", blog)
       .map(response => response.json());
   }
 
   // Update the content of blog with an ID in the database server
-  update(blog: any) {
+  update(blog: any): Observable<any> {
     return this.http.put(this.serverUrl + "/blog", blog)
       .map(response => response.json());
   }
 
   // Delete a blog with an ID from database server
-  delete(blogId: any) {
-    return this.http.delete(this.serverUrl + "/blog/" + blogId)
+  delete(_id: any): Observable<any> {
+    return this.http.delete(this.serverUrl + "/blog/" + _id)
       .map(response => response.json())
   }
 
   // Delete all blog from database server [PROHIBITED]
-  deleteAll() {
+  deleteAll(): Observable<any> {
     return this.http.delete(this.serverUrl + "/blog")
       .map(response => response.json());
   }
 
   // structure it so that databse will accept this to store i.e. here in our case modify the data to JSON.
-  prepareJSON(blog: any, _Id: any = "", blogger: string = ""): any {
-    let payLoad = { _Id: _Id, blogcontent: blog, blogger: blogger || "Jyotirmay Senapati" };
+  prepareJSON(blog: any, _id: any = "", blogger: string = ""): any {
+    let payLoad = { _id: _id, blogcontent: blog, blogger: blogger || "Jyotirmay Senapati" };
     return payLoad;
   }
+}
+
+/**
+ * 
+ * Service to deal with user login/logout and session details
+ * 
+ */
+@Injectable()
+export class UserSessionService {
+
+  // Property to hold root server URL i.e host
+  //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
+  private serverUrl: string = "http://127.0.0.1:3000"
+
+  constructor(private http: Http) { }
 }
 
 //############################################################################################################//
@@ -219,7 +245,7 @@ declare let FB: any;
   selector: 'facebookComment',
   template: `
     <div id="{{fbCommentID}}"> 
-      <div class="fb-comments" data-href="https://www.facebook.com/SenapatiJyotirmay/" data-width="1100" data-numposts="3">
+      <div class="fb-comments" data-href="https://www.facebook.com/SenapatiJyotirmay/" data-width="900" data-numposts="3">
       </div>
     </div>
   `
@@ -276,7 +302,7 @@ export class FacebookCommentComponent {
  */
 @Component({
   selector: 'newBlog',
-  providers: [myBlogService],
+  providers: [MyBlogService],
   styleUrls: ['app/css/blog.css'],
   templateUrl: `app/template/newBlog.htm`
 })
@@ -289,17 +315,16 @@ export class NewBlogComponent {
   public blogId: any = 0;
   private subscription: Subscription;
 
-  constructor(protected myblogservice: myBlogService, protected router : Router, protected route : ActivatedRoute) {}
+  constructor(protected myblogservice: MyBlogService, protected router: Router, protected route: ActivatedRoute) { }
 
   ngOnInit() {
     this.subscription = this.route.params.subscribe(
       (param: any) => {
         this.blogcontent = param['content'];
-        //this.blogId = param['id'];
-        console.log(this.blogcontent);
+        this.blogId = param['id'] || 0;
       });
   }
-  
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
@@ -317,7 +342,7 @@ export class NewBlogComponent {
       });
   }
 
-   // Add new blogs to database
+  // Add new blogs to database
   updateBlog() {
     this.isSuccess = false;
     this.blog = this.myblogservice.prepareJSON(this.blogcontent, this.blogId);
@@ -332,12 +357,39 @@ export class NewBlogComponent {
 
 /**
  * 
+ * A particular blog to show as a sample. 
+ * 
+ */
+@Component({
+  selector: 'SampleBlog',
+  providers: [MyBlogService],
+  styleUrls: ['app/css/blog.css'],
+  templateUrl: `app/template/sampleBlog.htm`
+})
+export class BlogSampleComponent {
+  public blogs = [];
+  public _id = 40;
+
+  constructor(protected myblogservice: MyBlogService) {
+    this.getOne();
+  }
+
+  // Get a particular blog with matched ID.
+  getOne() {
+    this.myblogservice.getById(this._id).subscribe(data => {
+      this.blogs = this.blogs.concat(data);
+    });
+  }
+}
+
+/**
+ * 
  * BlogListComponent to list out all blogs.
  * 
  */
 @Component({
   selector: 'myBlogs',
-  providers: [myBlogService],
+  providers: [MyBlogService],
   styleUrls: ['app/css/blog.css'],
   templateUrl: `app/template/myBlogs.htm`
 })
@@ -346,10 +398,10 @@ export class BlogListComponent {
   // Property to hold blog data
   public blogs = [];
   public isSuccess: Boolean;
+  public idRange = { minRange: 0, maxRange: 100 }
 
-  constructor(protected myblogservice: myBlogService, protected router: Router) {
+  constructor(protected myblogservice: MyBlogService, protected router: Router, protected zone: NgZone) {
     this.get();
-
   }
 
   // check function to check control is going to service
@@ -367,7 +419,7 @@ export class BlogListComponent {
   // Update the blog written by you
   updateBlog(blog) {
     this.isSuccess = false;
-    this.router.navigate(['blog/update/', blog.blogcontent]);
+    this.router.navigate(['blog/update/', blog._id, blog.blogcontent]);
     this.myblogservice.update(blog).subscribe(data => {
       this.isSuccess = true;
     },
@@ -381,7 +433,7 @@ export class BlogListComponent {
     this.isSuccess = false;
     this.myblogservice.delete(blog._id).subscribe(data => {
       this.isSuccess = true;
-      this.blogs = this.blogs.slice(this.blogs.indexOf(blog), 1);
+      this.blogs.slice(this.blogs.indexOf(blog), 1);
     },
       err => {
         this.isSuccess = false;
@@ -396,19 +448,34 @@ export class BlogListComponent {
  */
 @Component({
   selector: 'my-app',
-  providers: [myBlogService, AuthApp],
+  providers: [MyBlogService, AuthApp],
   styleUrls: ['app/css/app.css'],
   templateUrl: 'app/template/base.htm'
 })
 export class BlogHomeComponent {
 
-  loggedIn: String = "false";
+  public loggedIn: String = "false";
 
   constructor(protected router: Router) {
     this.router.navigate(['/blog/new']);
   }
 }
 
+/**
+ * 
+ * Contact Me Details Component
+ * 
+ */
+@Component({
+  selector: 'contact',
+  styleUrls: ['app/css/contact.css'],
+  templateUrl: `app/template/contact.htm`
+})
+export class ContactMe {
+
+  constructor() { }
+
+}
 /**
  * 
  * Blog Not Found Component.
@@ -427,6 +494,28 @@ export class BlogNotFoundComponent {
 //############################################################################################################//
 /**
  * 
+ * My Custom Filters
+ * 
+ */
+/**
+ * 
+ * custom Date filter to select between or for a particular date blog data
+ * 
+ */
+@Pipe({ name: 'dateFilter' })
+export class DateFilterPipe implements PipeTransform {
+  transform(blogs, idRange) {
+    if (typeof blogs == 'number') {
+      return false;
+    } else {
+      return blogs.filter(blog => { return (blog._id >= idRange.minRange && blog._id <= idRange.maxRange); });
+    }
+  }
+}
+
+//############################################################################################################//
+/**
+ * 
  * My Routes
  * 
  */
@@ -440,10 +529,12 @@ const appRoutes: Routes = [
     }
   },
   {
-    path: 'blog/update/:content', 
+    path: 'blog/update/:id/:content',
     component: NewBlogComponent
   },
-  { path: 'blog/Login', component: AuthApp },
+  { path: 'blog/login', component: AuthApp },
+  { path: 'blog/sample', component: BlogSampleComponent },
+  { path: 'blog/contact', component: ContactMe },
   { path: '', component: BlogHomeComponent },
   { path: '**', component: BlogNotFoundComponent }
 ];
@@ -460,8 +551,9 @@ const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes);
  */
 let declarationArr: Array<any> = [
   BlogHomeComponent, AuthApp,
-  BlogNotFoundComponent, BlogListComponent,
-  NewBlogComponent, FacebookCommentComponent, FbCommentDirective
+  BlogNotFoundComponent, BlogListComponent, BlogSampleComponent, ContactMe,
+  NewBlogComponent, FacebookCommentComponent, FbCommentDirective,
+  DateFilterPipe
 ];
 @NgModule({
   imports: [BrowserModule, HttpModule, CKEditorModule, FormsModule, routing],

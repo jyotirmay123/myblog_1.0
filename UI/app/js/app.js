@@ -55,57 +55,85 @@ exports.CONFIG = CONFIG;
  * My Sevices
  *
  */
-var myBlogService = (function () {
-    function myBlogService(http) {
+/**
+ *
+ * blogService to deal with CRUD operations related to blog
+ *
+ */
+var MyBlogService = (function () {
+    function MyBlogService(http) {
         this.http = http;
         // Property to hold root server URL i.e host
         //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
         this.serverUrl = "http://127.0.0.1:3000";
     }
     // check function in service to check control is coming to service
-    myBlogService.prototype.check = function () {
+    MyBlogService.prototype.check = function () {
         console.log("getting clicked from service");
     };
     // get function to get data from server
     // basically blog datas
-    myBlogService.prototype.get = function () {
+    MyBlogService.prototype.get = function () {
         return this.http.get(this.serverUrl + "/blog")
             .map(function (response) { return response.json(); });
     };
+    MyBlogService.prototype.getById = function (_id) {
+        return this.http.get(this.serverUrl + "/blog/" + _id)
+            .map(function (response) { return response.json(); });
+    };
     // add blog to database server
-    myBlogService.prototype.add = function (blog) {
+    MyBlogService.prototype.add = function (blog) {
         return this.http.post(this.serverUrl + "/blog", blog)
             .map(function (response) { return response.json(); });
     };
     // Update the content of blog with an ID in the database server
-    myBlogService.prototype.update = function (blog) {
+    MyBlogService.prototype.update = function (blog) {
         return this.http.put(this.serverUrl + "/blog", blog)
             .map(function (response) { return response.json(); });
     };
     // Delete a blog with an ID from database server
-    myBlogService.prototype.delete = function (blogId) {
-        return this.http.delete(this.serverUrl + "/blog/" + blogId)
+    MyBlogService.prototype.delete = function (_id) {
+        return this.http.delete(this.serverUrl + "/blog/" + _id)
             .map(function (response) { return response.json(); });
     };
     // Delete all blog from database server [PROHIBITED]
-    myBlogService.prototype.deleteAll = function () {
+    MyBlogService.prototype.deleteAll = function () {
         return this.http.delete(this.serverUrl + "/blog")
             .map(function (response) { return response.json(); });
     };
     // structure it so that databse will accept this to store i.e. here in our case modify the data to JSON.
-    myBlogService.prototype.prepareJSON = function (blog, _Id, blogger) {
-        if (_Id === void 0) { _Id = ""; }
+    MyBlogService.prototype.prepareJSON = function (blog, _id, blogger) {
+        if (_id === void 0) { _id = ""; }
         if (blogger === void 0) { blogger = ""; }
-        var payLoad = { _Id: _Id, blogcontent: blog, blogger: blogger || "Jyotirmay Senapati" };
+        var payLoad = { _id: _id, blogcontent: blog, blogger: blogger || "Jyotirmay Senapati" };
         return payLoad;
     };
-    myBlogService = __decorate([
+    MyBlogService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [http_1.Http])
-    ], myBlogService);
-    return myBlogService;
+    ], MyBlogService);
+    return MyBlogService;
 }());
-exports.myBlogService = myBlogService;
+exports.MyBlogService = MyBlogService;
+/**
+ *
+ * Service to deal with user login/logout and session details
+ *
+ */
+var UserSessionService = (function () {
+    function UserSessionService(http) {
+        this.http = http;
+        // Property to hold root server URL i.e host
+        //private serverUrl:string = "http://myblog-jms.c9users.io:8080"
+        this.serverUrl = "http://127.0.0.1:3000";
+    }
+    UserSessionService = __decorate([
+        core_1.Injectable(), 
+        __metadata('design:paramtypes', [http_1.Http])
+    ], UserSessionService);
+    return UserSessionService;
+}());
+exports.UserSessionService = UserSessionService;
 //############################################################################################################//
 /**
  *
@@ -228,7 +256,7 @@ var FacebookCommentComponent = (function () {
     FacebookCommentComponent = __decorate([
         core_1.Component({
             selector: 'facebookComment',
-            template: "\n    <div id=\"{{fbCommentID}}\"> \n      <div class=\"fb-comments\" data-href=\"https://www.facebook.com/SenapatiJyotirmay/\" data-width=\"1100\" data-numposts=\"3\">\n      </div>\n    </div>\n  "
+            template: "\n    <div id=\"{{fbCommentID}}\"> \n      <div class=\"fb-comments\" data-href=\"https://www.facebook.com/SenapatiJyotirmay/\" data-width=\"900\" data-numposts=\"3\">\n      </div>\n    </div>\n  "
         }),
         __param(0, core_1.Inject(platform_browser_1.DOCUMENT)), 
         __metadata('design:paramtypes', [Object, core_1.NgZone, router_1.Router, core_1.Renderer, core_1.ElementRef])
@@ -252,8 +280,7 @@ var NewBlogComponent = (function () {
         var _this = this;
         this.subscription = this.route.params.subscribe(function (param) {
             _this.blogcontent = param['content'];
-            //this.blogId = param['id'];
-            console.log(_this.blogcontent);
+            _this.blogId = param['id'] || 0;
         });
     };
     NewBlogComponent.prototype.ngOnDestroy = function () {
@@ -284,26 +311,59 @@ var NewBlogComponent = (function () {
     NewBlogComponent = __decorate([
         core_1.Component({
             selector: 'newBlog',
-            providers: [myBlogService],
+            providers: [MyBlogService],
             styleUrls: ['app/css/blog.css'],
             templateUrl: "app/template/newBlog.htm"
         }), 
-        __metadata('design:paramtypes', [myBlogService, router_1.Router, router_1.ActivatedRoute])
+        __metadata('design:paramtypes', [MyBlogService, router_1.Router, router_1.ActivatedRoute])
     ], NewBlogComponent);
     return NewBlogComponent;
 }());
 exports.NewBlogComponent = NewBlogComponent;
 /**
  *
+ * A particular blog to show as a sample.
+ *
+ */
+var BlogSampleComponent = (function () {
+    function BlogSampleComponent(myblogservice) {
+        this.myblogservice = myblogservice;
+        this.blogs = [];
+        this._id = 40;
+        this.getOne();
+    }
+    // Get a particular blog with matched ID.
+    BlogSampleComponent.prototype.getOne = function () {
+        var _this = this;
+        this.myblogservice.getById(this._id).subscribe(function (data) {
+            _this.blogs = _this.blogs.concat(data);
+        });
+    };
+    BlogSampleComponent = __decorate([
+        core_1.Component({
+            selector: 'SampleBlog',
+            providers: [MyBlogService],
+            styleUrls: ['app/css/blog.css'],
+            templateUrl: "app/template/sampleBlog.htm"
+        }), 
+        __metadata('design:paramtypes', [MyBlogService])
+    ], BlogSampleComponent);
+    return BlogSampleComponent;
+}());
+exports.BlogSampleComponent = BlogSampleComponent;
+/**
+ *
  * BlogListComponent to list out all blogs.
  *
  */
 var BlogListComponent = (function () {
-    function BlogListComponent(myblogservice, router) {
+    function BlogListComponent(myblogservice, router, zone) {
         this.myblogservice = myblogservice;
         this.router = router;
+        this.zone = zone;
         // Property to hold blog data
         this.blogs = [];
+        this.idRange = { minRange: 0, maxRange: 100 };
         this.get();
     }
     // check function to check control is going to service
@@ -321,7 +381,7 @@ var BlogListComponent = (function () {
     BlogListComponent.prototype.updateBlog = function (blog) {
         var _this = this;
         this.isSuccess = false;
-        this.router.navigate(['blog/update/', blog.blogcontent]);
+        this.router.navigate(['blog/update/', blog._id, blog.blogcontent]);
         this.myblogservice.update(blog).subscribe(function (data) {
             _this.isSuccess = true;
         }, function (err) {
@@ -334,7 +394,7 @@ var BlogListComponent = (function () {
         this.isSuccess = false;
         this.myblogservice.delete(blog._id).subscribe(function (data) {
             _this.isSuccess = true;
-            _this.blogs = _this.blogs.slice(_this.blogs.indexOf(blog), 1);
+            _this.blogs.slice(_this.blogs.indexOf(blog), 1);
         }, function (err) {
             _this.isSuccess = false;
         });
@@ -342,11 +402,11 @@ var BlogListComponent = (function () {
     BlogListComponent = __decorate([
         core_1.Component({
             selector: 'myBlogs',
-            providers: [myBlogService],
+            providers: [MyBlogService],
             styleUrls: ['app/css/blog.css'],
             templateUrl: "app/template/myBlogs.htm"
         }), 
-        __metadata('design:paramtypes', [myBlogService, router_1.Router])
+        __metadata('design:paramtypes', [MyBlogService, router_1.Router, core_1.NgZone])
     ], BlogListComponent);
     return BlogListComponent;
 }());
@@ -365,7 +425,7 @@ var BlogHomeComponent = (function () {
     BlogHomeComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            providers: [myBlogService, AuthApp],
+            providers: [MyBlogService, AuthApp],
             styleUrls: ['app/css/app.css'],
             templateUrl: 'app/template/base.htm'
         }), 
@@ -374,6 +434,25 @@ var BlogHomeComponent = (function () {
     return BlogHomeComponent;
 }());
 exports.BlogHomeComponent = BlogHomeComponent;
+/**
+ *
+ * Contact Me Details Component
+ *
+ */
+var ContactMe = (function () {
+    function ContactMe() {
+    }
+    ContactMe = __decorate([
+        core_1.Component({
+            selector: 'contact',
+            styleUrls: ['app/css/contact.css'],
+            templateUrl: "app/template/contact.htm"
+        }), 
+        __metadata('design:paramtypes', [])
+    ], ContactMe);
+    return ContactMe;
+}());
+exports.ContactMe = ContactMe;
 /**
  *
  * Blog Not Found Component.
@@ -395,6 +474,35 @@ exports.BlogNotFoundComponent = BlogNotFoundComponent;
 //############################################################################################################//
 /**
  *
+ * My Custom Filters
+ *
+ */
+/**
+ *
+ * custom Date filter to select between or for a particular date blog data
+ *
+ */
+var DateFilterPipe = (function () {
+    function DateFilterPipe() {
+    }
+    DateFilterPipe.prototype.transform = function (blogs, idRange) {
+        if (typeof blogs == 'number') {
+            return false;
+        }
+        else {
+            return blogs.filter(function (blog) { return (blog._id >= idRange.minRange && blog._id <= idRange.maxRange); });
+        }
+    };
+    DateFilterPipe = __decorate([
+        core_1.Pipe({ name: 'dateFilter' }), 
+        __metadata('design:paramtypes', [])
+    ], DateFilterPipe);
+    return DateFilterPipe;
+}());
+exports.DateFilterPipe = DateFilterPipe;
+//############################################################################################################//
+/**
+ *
  * My Routes
  *
  */
@@ -408,10 +516,12 @@ var appRoutes = [
         }
     },
     {
-        path: 'blog/update/:content',
+        path: 'blog/update/:id/:content',
         component: NewBlogComponent
     },
-    { path: 'blog/Login', component: AuthApp },
+    { path: 'blog/login', component: AuthApp },
+    { path: 'blog/sample', component: BlogSampleComponent },
+    { path: 'blog/contact', component: ContactMe },
     { path: '', component: BlogHomeComponent },
     { path: '**', component: BlogNotFoundComponent }
 ];
@@ -425,8 +535,9 @@ var routing = router_1.RouterModule.forRoot(appRoutes);
  */
 var declarationArr = [
     BlogHomeComponent, AuthApp,
-    BlogNotFoundComponent, BlogListComponent,
-    NewBlogComponent, FacebookCommentComponent, FbCommentDirective
+    BlogNotFoundComponent, BlogListComponent, BlogSampleComponent, ContactMe,
+    NewBlogComponent, FacebookCommentComponent, FbCommentDirective,
+    DateFilterPipe
 ];
 var app = (function () {
     function app() {

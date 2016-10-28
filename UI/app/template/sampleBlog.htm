@@ -1,0 +1,10 @@
+<h1>
+	Sample Blog
+</h1>
+<div *ngFor="let blog of blogs">
+	<p>BlogDetails :: {{blog._id}}, {{blog.blogger}}, {{blog.createdDate | date}} </p>
+	<div [innerHTML]="blog.blogcontent || blog.data">
+	</div>
+	<hr *ngIf="blogs.length > 1">
+</div>
+<div *ngIf="blogs.length == 0">No Blog Found.{{blogs.length}}</div>
