@@ -1,0 +1,17 @@
+<h1 (click)=check()>
+	My Blogs
+</h1>
+<div *ngIf="blogs.length != 1">
+	<div *ngFor="let blog of blogs">
+		<p>BlogDetails :: {{blog._id}}, {{blog.blogger}}</p>
+		<div class="button_group">
+			<i class="fa fa-edit" (click)=updateBlog(blog)></i>
+			<i class="fa fa-trash-o" (click)=deleteBlog(blog)></i>
+		</div>
+
+		<div [innerHTML]="blog.blogcontent || blog.data">
+		</div>
+		<hr *ngIf="blogs.length != 1">
+	</div>
+</div>
+<div *ngIf="blogs.length == 1 || blogs.length == 0">No Blog Found.</div>

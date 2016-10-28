@@ -22,7 +22,7 @@
       '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
       '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
       // other libraries
-      'rxjs':                       'npm:rxjs',
+      'rxjs': 'npm:rxjs',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
       'ng2-ckeditor': 'npm:ng2-ckeditor/lib/CKEditor.js'
     },
@@ -39,8 +39,8 @@
         main: './index.js',
         defaultExtension: 'js'
       },
-       'ng2-ckeditor': {
-         defaultExtension: 'js'
+      'ng2-ckeditor': {
+        defaultExtension: 'js'
       }
 
     }

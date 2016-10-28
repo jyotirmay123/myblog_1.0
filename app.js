@@ -6,6 +6,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
+var CryptoJS = require("crypto-js");
+
 //var stacktrace = require("stacktrace");
 
 var health = require('express-ping');
@@ -13,50 +15,39 @@ var health = require('express-ping');
 // Mongoo DB config File..
 var config = require("./config");
 
-// qc_defined apis
+// My Blog apis
 var NodeIndexRoute = require('./routes/NodeIndexRoute');
 var NodeBlogRoute = require('./routes/NodeBlogRoute');
-//var NodeTrainingRoute = require('./routes/NodeTrainingRoute');
-//var NodeUserRoute  =require('./routes/NodeUserRoute');
-//var NodeAssetRoute  =require('./routes/NodeAssetRoute');
-//var NodeLoginRoute  =require('./routes/NodeLoginRoute');
-//var NodeLogoutRoute  =require('./routes/NodeLogoutRoute');
-//var NodeEventRoute = require('./routes/NodeEventsRoute');
-//var NodeRoomRoute = require('./routes/NodeRoomRoute');
-//var NodeBookingRoute = require('./routes/NodeBookingRoute');
-//var WorkListRoute = require('./routes/NodeWorkListRoute');
-//var QbuzzRoute = require('./routes/NodeQbuzzRoute');
-
-//var NodeAppHealthCheck = require('./routes/NodeAppHealthCheck');
 
 //logger config
 var log4js = require('log4js');
 var date = new Date();
 var curr_date = date.getDate();
-var curr_month = date.getMonth()+1;
+var curr_month = date.getMonth() + 1;
 var curr_year = date.getFullYear();
-var formattedDate = curr_date +'-'+curr_month+'-'+curr_year;
+var formattedDate = curr_date + '-' + curr_month + '-' + curr_year;
+
 //log the app logger messages to a file, and the console ones as well.
 log4js.configure({
   appenders: [
-  {
-    type: "file",
-    filename: "logs/MyBlog_"+formattedDate+".log",
-    maxLogSize: 2048000,
-    backups: 3,
-    category: ['MyBlog'],
-    layout: {
-      type: 'pattern',
-      pattern: "[%r] [%[%5.5p%]] - %m%n"
+    {
+      type: "file",
+      filename: "logs/MyBlog_" + formattedDate + ".log",
+      maxLogSize: 2048000,
+      backups: 3,
+      category: ['MyBlog'],
+      layout: {
+        type: 'pattern',
+        pattern: "[%r] [%[%5.5p%]] - %m%n"
+      }
+    },
+    {
+      type: "console",
+      layout: {
+        type: 'pattern',
+        pattern: "[%r] [%[%5.5p%]] - %m%n"
+      }
     }
-  },
-  {
-    type : "console",
-    layout: {
-      type: 'pattern',
-      pattern: "[%r] [%[%5.5p%]] - %m%n"
-    }
-  }
   ],
   replaceConsole: true
 });
@@ -66,10 +57,8 @@ log.setLevel('ALL');
 
 //for more details on log4js >> https://github.com/nomiddlename/log4js-node/wiki/Layouts
 
-
-
 //Conect to DB
-mongoose.connect(config.mongoUri, function(err) {
+mongoose.connect(config.mongoUri, function (err) {
   if (!err) {
     log.info("Connected to Database.");
     log.info("*** Welcome to MyBlog ***");
@@ -120,30 +109,20 @@ client.search({
     console.trace(err.message);
 });*/
 
-
-
-
-
-
 //Creating global AP app
 var app = express();
 
-var corsOptions = { 
-         origin: true,
-         methods: 'GET,PUT,POST,DELETE',
-         maxAge: 1728000
-     };
-     
-     
-app.use(cors(corsOptions));
+var corsOptions = {
+  origin: true,
+  methods: 'GET,PUT,POST,DELETE',
+  maxAge: 1728000
+};
 
+app.use(cors(corsOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-//adding favicon to the app
-//app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -155,23 +134,9 @@ app.use(cookieParser());
 // qc routing
 app.use('/', NodeIndexRoute);
 app.use('/blog', NodeBlogRoute);
-//app.use('/logout', NodeLogoutRoute);
-//app.use('/userDetails', NodeUserDetailsRoute);
-//app.use('/trainings', NodeTrainingRoute);
-//app.use('/users', NodeUserRoute);
-//app.use('/assets', NodeAssetRoute);
-//app.use('/events', NodeEventRoute);
-//app.use('/rooms', NodeRoomRoute);
-//app.use('/bookings', NodeBookingRoute);
-//app.use('/approve', WorkListRoute);
-//app.use('/qbuzz', QbuzzRoute);
-
-
-//app.use(health.ping("/apphealth")); 
-//app.use('/dbhealth', NodeAppHealthCheck);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -182,7 +147,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
+  app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -204,7 +169,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

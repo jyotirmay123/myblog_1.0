@@ -28,40 +28,40 @@ var messages = [];
 var sockets = [];
 
 io.on('connection', function (socket) {
-    messages.forEach(function (data) {
-      socket.emit('message', data);
-    });
+  messages.forEach(function (data) {
+    socket.emit('message', data);
+  });
 
-    sockets.push(socket);
+  sockets.push(socket);
 
-    socket.on('disconnect', function () {
-      sockets.splice(sockets.indexOf(socket), 1);
-      updateRoster();
-    });
+  socket.on('disconnect', function () {
+    sockets.splice(sockets.indexOf(socket), 1);
+    updateRoster();
+  });
 
-    socket.on('message', function (msg) {
-      var text = String(msg || '');
+  socket.on('message', function (msg) {
+    var text = String(msg || '');
 
-      if (!text)
-        return;
+    if (!text)
+      return;
 
-      socket.get('name', function (err, name) {
-        var data = {
-          name: name,
-          text: text
-        };
+    socket.get('name', function (err, name) {
+      var data = {
+        name: name,
+        text: text
+      };
 
-        broadcast('message', data);
-        messages.push(data);
-      });
-    });
-
-    socket.on('identify', function (name) {
-      socket.set('name', String(name || 'Anonymous'), function (err) {
-        updateRoster();
-      });
+      broadcast('message', data);
+      messages.push(data);
     });
   });
+
+  socket.on('identify', function (name) {
+    socket.set('name', String(name || 'Anonymous'), function (err) {
+      updateRoster();
+    });
+  });
+});
 
 function updateRoster() {
   async.map(
@@ -100,15 +100,15 @@ function broadcast(event, data) {
         cluster.fork();
     });
 } else {*/
-  server.listen(process.env.PORT || 3000, process.env.IP || "localhost", function(){
-    var addr = server.address();
-    console.log("Chat server listening at", addr.address + ":" + addr.port);
-    
-    /*if (shell.exec('./elasticsearch/bin/elasticsearch -f').code !== 0) {
-      shell.echo('Error: Elastic server did not start');
-      shell.exit(1);
-    } else {
-      shell.echo("Elastic server started");
-    }*/
-  });
+server.listen(process.env.PORT || 3000, process.env.IP || "localhost", function () {
+  var addr = server.address();
+  console.log("Chat server listening at", addr.address + ":" + addr.port);
+
+  /*if (shell.exec('./elasticsearch/bin/elasticsearch -f').code !== 0) {
+    shell.echo('Error: Elastic server did not start');
+    shell.exit(1);
+  } else {
+    shell.echo("Elastic server started");
+  }*/
+});
 //}

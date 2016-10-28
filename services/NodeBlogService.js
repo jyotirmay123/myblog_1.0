@@ -3,78 +3,95 @@
 *@Date :: 01st Oct, 2016
 */
 
-	var BlogModel = require('../models/NodeBlogModel').blogModel;
-	
-	console.log('in NodeBlogService');
+var BlogModel = require('../models/NodeBlogModel').blogModel;
 
-	var NodeBlogService = {
-		save : function(blogDetails,next) {
-			var blogModel = new BlogModel(blogDetails, {_id:false});  
-			blogModel.save(function(err) {
-				if (err) {
-					next(err);
-				} else {
-					next(null);
-				}
-			});
-		},
+console.log('in NodeBlogService');
 
-		getAll : function(next) {console.log("Get ALl coming service")
-			var query = BlogModel.find().sort({"blogId":1});
-			query.exec(function(err, blogs) {
-				if (err){
-					next(err);
-				}
-				else if(blogs.length!=0){
-					next(null,blogs);
-				}
-				else{
-					next('No Blogs Found');
-				}
-			});
-		},
-		
-		getById : function(id,next) {
-			var query = BlogModel.findOne({
-				"blogId" : id
-			});
-			query.exec(function(err, blog) {
-				if (err){
-					next(err);
-				}
-				else if(blog){
-					next(null,blog);
-				}
-				else{
-					next('No blog Found with blogId: ' + id);
-				}
-			});
-		},
-		
-		edit : function(blogDetails,next) {
-			var id = blogDetails.blogId;
-			if (typeof id == 'undefined') {
-				next('Error: blogId Not Found.');
+var NodeBlogService = {
+	// Save to blogSchema
+	save: function (blogDetails, next) {
+		var blogModel = new BlogModel(blogDetails);
+		blogModel.save(function (err) {
+			if (err) {
+				next(err);
+			} else {
+				next(null, { message: "Blog Saved Successfully", blogId: blogModel._id })
 			}
-			//delete assetDetails.assetId;
-			BlogModel.update({"blogId":id},blogDetails,{},function(err) {
-				if (err) {
-					next(err);
-				} else {
-					next(null);
-				}
-			});
-		},
+		});
+	},
 
-		delete : function(id,next) {
-			BlogModel.remove({"assetId" : id},function(err) {
-				if (err) {
-					next(err);
-				} else{
-					next(null,'Asset Deleted');
-				}
-			});
-		}	
+	// Get all blogs saved in blogSchema
+	getAll: function (next) {
+		console.log("Get ALl coming service")
+		var query = BlogModel.find().sort({ "_id": 1 });
+		query.exec(function (err, blogs) {
+			if (err) {
+				next(err);
+			}
+			else if (blogs.length != 0) {
+				next(null, blogs);
+			}
+			else {
+				next({ message: 'No Blogs Found' });
+			}
+		});
+	},
+
+	// Get one blog with matched ID from blogSchema
+	getById: function (id, next) {
+		var query = BlogModel.findOne({
+			"_id": id
+		});
+		query.exec(function (err, blog) {
+			if (err) {
+				next(err);
+			}
+			else if (blog) {
+				next(null, blog);
+			}
+			else {
+				next({ message: 'No blog Found with blogId: ' + id });
+			}
+		});
+	},
+
+	// Update and save the blog with ID provided into the blogSchema
+	edit: function (blogDetails, next) {
+		var id = blogDetails._id;
+		if (typeof id == 'undefined') {
+			next({ error: 'blogId Not Found.' });
+			return;
+		}
+		BlogModel.update({ "_id": id }, blogDetails, {}, function (err) {
+			if (err) {
+				next(err);
+			} else {
+				next(null, { message: 'blog with id:' + id + ' Updated' });
+			}
+		});
+	},
+
+	// Delete a blog with matched ID from blogSchema
+	delete: function (id, next) {
+		BlogModel.remove({ "_id": id }, function (err) {
+			if (err) {
+				next(err);
+			} else {
+				next(null, { message: 'blog with id:' + id + ' Deleted' });
+			}
+		});
+	},
+
+	// delete all blogs from blogSchema
+	deleteAll: function (next) {
+		BlogModel.remove({}, function (err) {
+			if (err) {
+				next(err);
+			} else {
+				next(null, { message: 'All blogs Deleted' });
+			}
+		});
 	}
+}
 
-	module.exports = NodeBlogService;
+module.exports = NodeBlogService;
