@@ -1,6 +1,6 @@
 body {margin-top: 0px;margin-left: 0px;}
 
-#page_1 {position:relative; overflow: hidden;margin: 32px 0px 32px 32px;padding: 0px;border: none;width: 784px;height: 992px;}
+#page_1 {position:relative; overflow: hidden;margin: 32px 0px 32px 32px;padding: 0px;border: solid;width: 784px;height: 992px;}
 
 #page_1 #p1dimg1 {position:absolute;top:0px;left:0px;z-index:-1;width:752px;height:992px;}
 #page_1 #p1dimg1 #p1img1 {width:752px;height:992px;}
@@ -8,7 +8,7 @@ body {margin-top: 0px;margin-left: 0px;}
 
 
 
-#page_2 {position:relative; overflow: hidden;margin: 32px 0px 32px 32px;padding: 0px;border: none;width: 784px;height: 992px;}
+#page_2 {position:relative; overflow: hidden;margin: 32px 0px 32px 32px;padding: 0px;border: solid;width: 784px;height: 992px;}
 #page_2 #id_1 {border:none;margin: 14px 0px 0px 25px;padding: 0px;border:none;width: 759px;overflow: hidden;}
 #page_2 #id_2 {border:none;margin: 19px 0px 0px 516px;padding: 0px;border:none;width: 268px;overflow: hidden;}
 
