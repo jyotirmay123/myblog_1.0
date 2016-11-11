@@ -19,7 +19,7 @@ import {
   Component, NgModule, Injectable, Inject, NgZone, Pipe, PipeTransform,
   ModuleWithProviders, OnInit, Directive, ElementRef, Input, Renderer
 } from '@angular/core';
-import { PathLocationStrategy, LocationStrategy } from '@angular/common';
+import { PathLocationStrategy, LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { Http, HttpModule, Request, Response } from '@angular/http';
 import { Routes, RouterModule, Router, ActivatedRoute, Params } from '@angular/router';
 import { BrowserModule, DOCUMENT } from '@angular/platform-browser';
@@ -55,11 +55,11 @@ export class CONFIG {
   // Production config
   /*
   public _gapiURL: any; 
-  public _serverUrl : string = "http://myblog-jms.c9users.io:8080";
-  protected _fbAPPID: number;
+  public _serverUrl : string = "https://warm-hamlet-28520.herokuapp.com";
+  protected _fbAPPID: number = 1834265296843281;
   protected _authTOKEN: any;
-  public _fbSDKURL: string;
- 
+  public _fbSDKURL: string = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=" + this._fbAPPID;
+  public static sess: any = [];
   */
 
   constructor() {
@@ -318,7 +318,7 @@ export class FacebookCommentComponent {
   constructor( @Inject(DOCUMENT) private document: any, private _zone: NgZone, protected router: Router,
     public r: Renderer, public el: ElementRef, protected $c: CONFIG) {
     if (!CONFIG.sess.isLoggedIn) {
-      this.router.navigate(['/blog/login']);
+      this.router.navigate(['blog/login']);
     }
     this.fbCommentID = "fbCommentId";
     this.loadFBCommentAPI(this.document, 'script', 'facebook-jssdk');
@@ -379,7 +379,7 @@ export class NewBlogComponent {
 
   constructor(protected myblogservice: MyBlogService, protected router: Router, protected route: ActivatedRoute) {
     if (!CONFIG.sess.isLoggedIn) {
-      this.router.navigate(['/blog/login']);
+      this.router.navigate(['blog/login']);
     }
   }
 
@@ -399,10 +399,14 @@ export class NewBlogComponent {
   // Add new blogs to database
   addBlog() {
     this.isSuccess = false;
+    if (this.blogcontent == undefined) {
+      console.log("No Blog Entry. Please add Blog before submitting it");
+      return;
+    }
     this.blog = this.myblogservice.prepareJSON(this.blogcontent);
     this.myblogservice.add(this.blog).subscribe(data => {
       this.isSuccess = true;
-      this.router.navigate(['/blog']);
+      this.router.navigate(['blog']);
     },
       err => {
         this.isSuccess = false;
@@ -415,7 +419,7 @@ export class NewBlogComponent {
     this.blog = this.myblogservice.prepareJSON(this.blogcontent, this.blogId);
     this.myblogservice.update(this.blog).subscribe(data => {
       this.isSuccess = true;
-      this.router.navigate(['/blog']);
+      this.router.navigate(['blog']);
     },
       err => {
         this.isSuccess = false;
@@ -440,7 +444,7 @@ export class BlogSampleComponent {
 
   constructor(protected myblogservice: MyBlogService, protected router: Router) {
     if (!CONFIG.sess.isLoggedIn) {
-      this.router.navigate(['/blog/login']);
+      this.router.navigate(['blog/login']);
     }
     this.getOne();
   }
@@ -473,7 +477,7 @@ export class BlogListComponent {
 
   constructor(protected myblogservice: MyBlogService, protected router: Router, protected zone: NgZone) {
     if (!CONFIG.sess.isLoggedIn) {
-      this.router.navigate(['/blog/login']);
+      this.router.navigate(['blog/login']);
     }
     this.get();
   }
@@ -532,7 +536,9 @@ export class BlogHomeComponent {
 
   constructor(protected router: Router) {
     if (!CONFIG.sess.isLoggedIn) {
-      this.router.navigate(['/blog/login']);
+      this.router.navigate(['blog/login']);
+    } else {
+      this.router.navigate(['blog/new']);
     }
   }
 }
@@ -634,7 +640,7 @@ let declarationArr: Array<any> = [
 @NgModule({
   imports: [BrowserModule, HttpModule, CKEditorModule, FormsModule, routing],
   declarations: declarationArr,
-  providers: [{ provide: LocationStrategy, useClass: PathLocationStrategy }, appRoutingProviders, CONFIG],
+  providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }, appRoutingProviders, CONFIG],
   bootstrap: [BlogHomeComponent]
 })
 export class app { }
@@ -646,4 +652,4 @@ export class app { }
  * 
  */
 const platform = platformBrowserDynamic();
-platform.bootstrapModule(app);
+platform.bootstrapModule(app).catch((err: any) => console.error(err));

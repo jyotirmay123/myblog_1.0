@@ -47,11 +47,11 @@ var CONFIG = (function () {
     // Production config
     /*
     public _gapiURL: any;
-    public _serverUrl : string = "http://myblog-jms.c9users.io:8080";
-    protected _fbAPPID: number;
+    public _serverUrl : string = "https://warm-hamlet-28520.herokuapp.com";
+    protected _fbAPPID: number = 1834265296843281;
     protected _authTOKEN: any;
-    public _fbSDKURL: string;
-   
+    public _fbSDKURL: string = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=" + this._fbAPPID;
+    public static sess: any = [];
     */
     function CONFIG() {
         // APPLICATION VERSION
@@ -288,7 +288,7 @@ var FacebookCommentComponent = (function () {
             });
         };
         if (!CONFIG.sess.isLoggedIn) {
-            this.router.navigate(['/blog/login']);
+            this.router.navigate(['blog/login']);
         }
         this.fbCommentID = "fbCommentId";
         this.loadFBCommentAPI(this.document, 'script', 'facebook-jssdk');
@@ -325,7 +325,7 @@ var NewBlogComponent = (function () {
         this.route = route;
         this.blogId = 0;
         if (!CONFIG.sess.isLoggedIn) {
-            this.router.navigate(['/blog/login']);
+            this.router.navigate(['blog/login']);
         }
     }
     NewBlogComponent.prototype.ngOnInit = function () {
@@ -342,10 +342,14 @@ var NewBlogComponent = (function () {
     NewBlogComponent.prototype.addBlog = function () {
         var _this = this;
         this.isSuccess = false;
+        if (this.blogcontent == undefined) {
+            console.log("No Blog Entry. Please add Blog before submitting it");
+            return;
+        }
         this.blog = this.myblogservice.prepareJSON(this.blogcontent);
         this.myblogservice.add(this.blog).subscribe(function (data) {
             _this.isSuccess = true;
-            _this.router.navigate(['/blog']);
+            _this.router.navigate(['blog']);
         }, function (err) {
             _this.isSuccess = false;
         });
@@ -357,7 +361,7 @@ var NewBlogComponent = (function () {
         this.blog = this.myblogservice.prepareJSON(this.blogcontent, this.blogId);
         this.myblogservice.update(this.blog).subscribe(function (data) {
             _this.isSuccess = true;
-            _this.router.navigate(['/blog']);
+            _this.router.navigate(['blog']);
         }, function (err) {
             _this.isSuccess = false;
         });
@@ -386,7 +390,7 @@ var BlogSampleComponent = (function () {
         this.blogs = [];
         this._id = 40;
         if (!CONFIG.sess.isLoggedIn) {
-            this.router.navigate(['/blog/login']);
+            this.router.navigate(['blog/login']);
         }
         this.getOne();
     }
@@ -423,7 +427,7 @@ var BlogListComponent = (function () {
         this.blogs = [];
         this.idRange = { minRange: 0, maxRange: 100 };
         if (!CONFIG.sess.isLoggedIn) {
-            this.router.navigate(['/blog/login']);
+            this.router.navigate(['blog/login']);
         }
         this.get();
     }
@@ -482,7 +486,10 @@ var BlogHomeComponent = (function () {
         this.router = router;
         this.loggedIn = "false";
         if (!CONFIG.sess.isLoggedIn) {
-            this.router.navigate(['/blog/login']);
+            this.router.navigate(['blog/login']);
+        }
+        else {
+            this.router.navigate(['blog/new']);
         }
     }
     BlogHomeComponent = __decorate([
@@ -609,7 +616,7 @@ var app = (function () {
         core_1.NgModule({
             imports: [platform_browser_1.BrowserModule, http_1.HttpModule, ng2_ckeditor_1.CKEditorModule, forms_1.FormsModule, routing],
             declarations: declarationArr,
-            providers: [{ provide: common_1.LocationStrategy, useClass: common_1.PathLocationStrategy }, appRoutingProviders, CONFIG],
+            providers: [{ provide: common_1.LocationStrategy, useClass: common_1.HashLocationStrategy }, appRoutingProviders, CONFIG],
             bootstrap: [BlogHomeComponent]
         }), 
         __metadata('design:paramtypes', [])
@@ -624,5 +631,5 @@ exports.app = app;
  *
  */
 var platform = platform_browser_dynamic_1.platformBrowserDynamic();
-platform.bootstrapModule(app);
+platform.bootstrapModule(app).catch(function (err) { return console.error(err); });
 //# sourceMappingURL=app.js.map

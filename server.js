@@ -104,7 +104,7 @@ function broadcast(event, data) {
         cluster.fork();
     });
 } else {*/
-server.listen(process.env.PORT || 3000, function () {
+server.listen(process.env.PORT || 3000, process.env.IP || "localhost", function () {
   var addr = server.address();
   console.log("Chat server listening at", addr.address + ":" + addr.port);
 
