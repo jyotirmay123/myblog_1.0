@@ -17,18 +17,25 @@
  */
 import {
   Component, NgModule, Injectable, Inject, NgZone, Pipe, PipeTransform,
-  ModuleWithProviders, OnInit, Directive, ElementRef, Input, Renderer
+  ModuleWithProviders, OnInit, Directive, ElementRef, Input, Renderer, EventEmitter,
+  Output
 } from '@angular/core';
 import { PathLocationStrategy, LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { Http, HttpModule, Request, Response } from '@angular/http';
 import { Routes, RouterModule, Router, ActivatedRoute, Params } from '@angular/router';
+//import { ROUTER_DIRECTIVES} from '@angular/router-deprecated'
 import { BrowserModule, DOCUMENT } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+//import { Subject } from 'rxjs/Subject'
 import { Observable } from 'rxjs/Observable';
 
+
 import 'rxjs/add/operator/map';
+//import { _ } from 'lodash';
+
+
 
 // Other ng-modules
 import { CKEditorModule } from 'ng2-ckeditor';
@@ -49,7 +56,7 @@ export class CONFIG {
   public _serverUrl: string = "http://127.0.0.1:3000";
   protected _fbAPPID: number = 1834265296843281;
   protected _authTOKEN: any;
-  public _fbSDKURL: string = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=" + this._fbAPPID;
+  public _fbSDKURL: string = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
   public static sess: any = [];
 
   // Production config
@@ -236,11 +243,11 @@ export class AuthApp {
 
   }
 
-  ngOnInit() { 
+  ngOnInit() {
     console.log(CONFIG.sess.isLoggedIn + CONFIG.sess.username);
     this.update();
     console.log(this.isLoggedIn + this.userDisplayName)
-  }    
+  }
 
   // Signout from Application and resetting values to default.
   signOut = () => {
@@ -285,7 +292,7 @@ export class AuthApp {
       localStorage.setItem("isLoggedIn", CONFIG.sess.isLoggedIn);
       //this.userAuthToken = loggedInUser.getAuthResponse().id_token;
       CONFIG.sess.username = loggedInUser.getBasicProfile().getName();
-      localStorage.setItem("username", CONFIG.sess.username );
+      localStorage.setItem("username", CONFIG.sess.username);
 
       console.log(CONFIG.sess);
     });
@@ -440,7 +447,7 @@ export class NewBlogComponent {
 })
 export class BlogSampleComponent {
   public blogs = [];
-  public _id = 40;
+  public _id = 43;
 
   constructor(protected myblogservice: MyBlogService, protected router: Router) {
     if (!CONFIG.sess.isLoggedIn) {
@@ -473,7 +480,9 @@ export class BlogListComponent {
   // Property to hold blog data
   public blogs = [];
   public isSuccess: Boolean;
-  public idRange = { minRange: 0, maxRange: 100 }
+  public idRange = { minRange: 0, maxRange: 100 };
+  public orderColumn = '_id';
+  public asc = false;
 
   constructor(protected myblogservice: MyBlogService, protected router: Router, protected zone: NgZone) {
     if (!CONFIG.sess.isLoggedIn) {
@@ -487,6 +496,13 @@ export class BlogListComponent {
     this.myblogservice.check();
   }
 
+  changeOrder() {
+    this.asc = !this.asc;
+  }
+
+  changeSortColumn() {
+    this.orderColumn = this.orderColumn == '_id' ? 'createdDate' : '_id';
+  }
   // get function calls service get function which return data from server
   get() {
     this.myblogservice.get().subscribe(data => {
@@ -587,11 +603,74 @@ export class BlogNotFoundComponent {
 @Pipe({ name: 'dateFilter' })
 export class DateFilterPipe implements PipeTransform {
   transform(blogs, idRange) {
+
     if (typeof blogs == 'number') {
       return false;
     } else {
       return blogs.filter(blog => { return (blog._id >= idRange.minRange && blog._id <= idRange.maxRange); });
     }
+  }
+}
+
+/**
+ * 
+ * Declaring jQuery famous "$"
+ * Later defining orderBy pipe to order the content according to 
+ * the requirement. 
+ * 
+ */
+declare let $: any;
+
+@Pipe({ name: 'orderBy' })
+export class OrderByPipe implements PipeTransform {
+
+  transform(array, orderBy, asc = true) {
+
+    if (!orderBy || orderBy.trim() == "") {
+      return array;
+    }
+
+    let temp = [];
+
+    //ascending
+    if (asc) {
+      temp = array.sort((item1: any, item2: any) => {
+        let a = item1[orderBy];
+        let b = item2[orderBy];
+        return this.orderByComparator(a, b);
+      });
+    }
+    else {
+      //not asc
+      temp = array.sort((item1: any, item2: any) => {
+        let a = item1[orderBy];
+        let b = item2[orderBy];
+        return this.orderByComparator(b, a);
+      });
+    }
+
+    return $.extend(true, [], temp);
+
+  }
+  /**
+   * 
+   * A function used to help orderByPipe to work.
+   * Gives result by comparing any two data and arranging them accordingly.
+   */
+  orderByComparator(a: any, b: any): number {
+
+    if ((isNaN(parseFloat(a)) || !isFinite(a)) || (isNaN(parseFloat(b)) || !isFinite(b))) {
+      //Isn't a number so lowercase the string to properly compare
+      if (a.toLowerCase() < b.toLowerCase()) return -1;
+      if (a.toLowerCase() > b.toLowerCase()) return 1;
+    }
+    else {
+      //Parse strings as numbers to compare properly
+      if (parseFloat(a) < parseFloat(b)) return -1;
+      if (parseFloat(a) > parseFloat(b)) return 1;
+    }
+
+    return 0; //equal each other
   }
 }
 
@@ -635,12 +714,12 @@ let declarationArr: Array<any> = [
   BlogHomeComponent, AuthApp,
   BlogNotFoundComponent, BlogListComponent, BlogSampleComponent, ContactMe,
   NewBlogComponent, FacebookCommentComponent, FbCommentDirective,
-  DateFilterPipe
+  DateFilterPipe, OrderByPipe
 ];
 @NgModule({
   imports: [BrowserModule, HttpModule, CKEditorModule, FormsModule, routing],
   declarations: declarationArr,
-  providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }, appRoutingProviders, CONFIG],
+  providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }, appRoutingProviders, CONFIG ],
   bootstrap: [BlogHomeComponent]
 })
 export class app { }
@@ -653,3 +732,4 @@ export class app { }
  */
 const platform = platformBrowserDynamic();
 platform.bootstrapModule(app).catch((err: any) => console.error(err));
+

@@ -31,10 +31,12 @@ var core_1 = require('@angular/core');
 var common_1 = require('@angular/common');
 var http_1 = require('@angular/http');
 var router_1 = require('@angular/router');
+//import { ROUTER_DIRECTIVES} from '@angular/router-deprecated'
 var platform_browser_1 = require('@angular/platform-browser');
 var platform_browser_dynamic_1 = require('@angular/platform-browser-dynamic');
 var forms_1 = require('@angular/forms');
 require('rxjs/add/operator/map');
+//import { _ } from 'lodash';
 // Other ng-modules
 var ng2_ckeditor_1 = require('ng2-ckeditor');
 //############################################################################################################//
@@ -58,7 +60,7 @@ var CONFIG = (function () {
         this.__version__ = "1.0.0";
         this._serverUrl = "http://127.0.0.1:3000";
         this._fbAPPID = 1834265296843281;
-        this._fbSDKURL = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=" + this._fbAPPID;
+        this._fbSDKURL = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
         CONFIG.sess.isLoggedIn = localStorage.getItem("isLoggedIn") || false;
         CONFIG.sess.username = localStorage.getItem("username") || "Hi Guest";
     }
@@ -388,7 +390,7 @@ var BlogSampleComponent = (function () {
         this.myblogservice = myblogservice;
         this.router = router;
         this.blogs = [];
-        this._id = 40;
+        this._id = 43;
         if (!CONFIG.sess.isLoggedIn) {
             this.router.navigate(['blog/login']);
         }
@@ -426,6 +428,8 @@ var BlogListComponent = (function () {
         // Property to hold blog data
         this.blogs = [];
         this.idRange = { minRange: 0, maxRange: 100 };
+        this.orderColumn = '_id';
+        this.asc = false;
         if (!CONFIG.sess.isLoggedIn) {
             this.router.navigate(['blog/login']);
         }
@@ -434,6 +438,12 @@ var BlogListComponent = (function () {
     // check function to check control is going to service
     BlogListComponent.prototype.check = function () {
         this.myblogservice.check();
+    };
+    BlogListComponent.prototype.changeOrder = function () {
+        this.asc = !this.asc;
+    };
+    BlogListComponent.prototype.changeSortColumn = function () {
+        this.orderColumn = this.orderColumn == '_id' ? 'createdDate' : '_id';
     };
     // get function calls service get function which return data from server
     BlogListComponent.prototype.get = function () {
@@ -570,6 +580,63 @@ var DateFilterPipe = (function () {
     return DateFilterPipe;
 }());
 exports.DateFilterPipe = DateFilterPipe;
+var OrderByPipe = (function () {
+    function OrderByPipe() {
+    }
+    OrderByPipe.prototype.transform = function (array, orderBy, asc) {
+        var _this = this;
+        if (asc === void 0) { asc = true; }
+        if (!orderBy || orderBy.trim() == "") {
+            return array;
+        }
+        var temp = [];
+        //ascending
+        if (asc) {
+            temp = array.sort(function (item1, item2) {
+                var a = item1[orderBy];
+                var b = item2[orderBy];
+                return _this.orderByComparator(a, b);
+            });
+        }
+        else {
+            //not asc
+            temp = array.sort(function (item1, item2) {
+                var a = item1[orderBy];
+                var b = item2[orderBy];
+                return _this.orderByComparator(b, a);
+            });
+        }
+        return $.extend(true, [], temp);
+    };
+    /**
+     *
+     * A function used to help orderByPipe to work.
+     * Gives result by comparing any two data and arranging them accordingly.
+     */
+    OrderByPipe.prototype.orderByComparator = function (a, b) {
+        if ((isNaN(parseFloat(a)) || !isFinite(a)) || (isNaN(parseFloat(b)) || !isFinite(b))) {
+            //Isn't a number so lowercase the string to properly compare
+            if (a.toLowerCase() < b.toLowerCase())
+                return -1;
+            if (a.toLowerCase() > b.toLowerCase())
+                return 1;
+        }
+        else {
+            //Parse strings as numbers to compare properly
+            if (parseFloat(a) < parseFloat(b))
+                return -1;
+            if (parseFloat(a) > parseFloat(b))
+                return 1;
+        }
+        return 0; //equal each other
+    };
+    OrderByPipe = __decorate([
+        core_1.Pipe({ name: 'orderBy' }), 
+        __metadata('design:paramtypes', [])
+    ], OrderByPipe);
+    return OrderByPipe;
+}());
+exports.OrderByPipe = OrderByPipe;
 //############################################################################################################//
 /**
  *
@@ -607,7 +674,7 @@ var declarationArr = [
     BlogHomeComponent, AuthApp,
     BlogNotFoundComponent, BlogListComponent, BlogSampleComponent, ContactMe,
     NewBlogComponent, FacebookCommentComponent, FbCommentDirective,
-    DateFilterPipe
+    DateFilterPipe, OrderByPipe
 ];
 var app = (function () {
     function app() {

@@ -3,7 +3,11 @@
 <h1 (click)=check()>
 	My Blogs
 </h1>
-<div *ngFor="let blog of (blogs | dateFilter:idRange)">
+<button (click)=changeOrder()>Change Order</button>
+<button (click)=changeSortColumn()>Change Sorting</button>
+<!--pagination></pagination-->
+
+<div *ngFor="let blog of (blogs | dateFilter : idRange | orderBy : orderColumn : asc)">
 	<p>BlogDetails :: {{blog._id}}, {{blog.blogger}}, {{blog.createdDate | date}} </p>
 	<div class="button_group">
 		<i class="fa fa-edit" (click)=updateBlog(blog)></i>

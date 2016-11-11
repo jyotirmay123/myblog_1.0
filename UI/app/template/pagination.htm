@@ -1,0 +1,127 @@
+<h1>Pagination POC</h1>
+<ul *ngIf="totalPages() > 1" class="pagination pagination-sm no-margin pull-right">{{totalPages}}
+  <li *ngIf="page != 1"><a (click)="pageClicked(prevPage())">«</a></li>
+  <li *ngFor="let p of pagesRange()"><a (click)="pageClicked(p)">{{p}}</a></li>
+  <li *ngIf="totalPages() > page"><a (click)="pageClicked(nextPage())">»</a></li>
+</ul>
+
+
+<!--
+@Component({
+  selector: 'pagination',
+  templateUrl: '/app/template/pagination.htm',
+  //directives: [ROUTER_DIRECTIVES]
+})
+export class PaginationComponent {
+  totalPage: number = 0
+
+  @Input()
+  params: { [key: string]: string | number } = {}
+
+  @Input()
+  total: number = 50
+
+  @Input()
+  page: number = 1
+
+  @Output()
+  goTo: EventEmitter<number> = new EventEmitter<number>()
+
+  constructor(protected _location: Location, protected _router: Router) { }
+
+  totalPages() {
+    // 10 items per page per default
+    return Math.ceil(this.total / 10)
+  }
+
+  rangeStart() {
+    return Math.floor(this.page / 10) * 10 + 1
+  }
+
+  pagesRange() {
+    return {
+      rangeStart: this.rangeStart(), min: Math.min(this.rangeStart() + 10, this.totalPages() + 1)
+    }
+  }
+
+  prevPage() {
+    return Math.max(this.rangeStart(), this.page - 1)
+  }
+
+  nextPage() {
+    return Math.min(this.page + 1, this.totalPages())
+  }
+
+  pageParams(page: number) {
+    let params = this.params
+    params['page'] = page
+    return params
+  }
+
+  pageClicked(page: number) {
+    //this is not ideal but it works for me
+    const instruction = this._router.generate([
+      this._router.root.currentInstruction.component.routeName,
+      this.pageParams(page)
+    ])
+    // We change the history of the browser in case a user press refresh
+    //this._location.go('/'+instruction.toLinkUrl())
+    this.goTo.next(page)
+  }
+}
+
+
+@Component({
+    selector: 'post-list',
+    templateUrl: '/app/template/post-list.htm',
+})
+export class PostListComponent implements OnInit {
+  total$: Observable<number>
+  items$: Observable<any[]>
+
+  page: number = 1
+  terms: string = ""
+
+  private searchTermStream = new Subject<string>()
+  private pageStream = new Subject<number>()
+
+  constructor(protected params: RouteParams, protected postService: PostService) {
+    this.page = parseInt(params.get('page')) || 1
+    this.terms = params.get('q') || ""
+  }
+
+  ngOnInit() {
+      const pageSource = this.pageStream.map(pageNumber => {
+        this.page = pageNumber
+        return {search: this.terms, page: pageNumber}
+      })
+
+      const searchSource = this.searchTermStream
+        .debounceTime(1000)
+        .distinctUntilChanged()
+        .map(searchTerm => {
+          this.terms = searchTerm
+          return {search: searchTerm, page: 1}
+        })
+
+      const source = pageSource
+        .merge(searchSource)
+        .startWith({search: this.terms, page: this.page})
+        .mergeMap((params: {search: string, page: number}) => {
+          return this.list(params.search, params.page)
+        })
+        .share()
+
+      //this.total$ = source.pluck('total')
+      //this.items$ = source.pluck('items')
+  }
+
+  search(terms: string) {
+    this.searchTermStream.next(terms)
+  }
+
+  goToPage(page: number) {
+    this.pageStream.next(page)
+  }
+}
+-->
