@@ -57,7 +57,7 @@ var CONFIG = (function () {
     */
     function CONFIG() {
         // APPLICATION VERSION
-        this.__version__ = "1.0.0";
+        this.__version__ = "1.1.3";
         this._serverUrl = "http://127.0.0.1:3000";
         this._fbAPPID = 1834265296843281;
         this._fbSDKURL = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
@@ -85,8 +85,8 @@ var MyBlogService = (function () {
         this.$c = $c;
         this.serviceUrl = '/blog';
         this.serverUrl = $c._serverUrl;
-        console.log(CONFIG.sess.isLoggedIn);
-        console.log(CONFIG.sess);
+        //console.log(CONFIG.sess.isLoggedIn);
+        //console.log(CONFIG.sess);
     }
     // check function in service to check control is coming to service
     MyBlogService.prototype.check = function () {
@@ -216,14 +216,14 @@ var AuthApp = (function () {
         // login provider.
         this.onGoogleLoginSuccess = function (loggedInUser) {
             _this._zone.run(function () {
-                console.log(loggedInUser);
+                //console.log(loggedInUser);
                 CONFIG.sess.push(loggedInUser);
                 CONFIG.sess.isLoggedIn = true;
                 localStorage.setItem("isLoggedIn", CONFIG.sess.isLoggedIn);
                 //this.userAuthToken = loggedInUser.getAuthResponse().id_token;
                 CONFIG.sess.username = loggedInUser.getBasicProfile().getName();
                 localStorage.setItem("username", CONFIG.sess.username);
-                console.log(CONFIG.sess);
+                //console.log(CONFIG.sess);
             });
             setTimeout(function () { return _this.update(); }, 2000);
         };
@@ -237,9 +237,9 @@ var AuthApp = (function () {
         this.isLoggedIn = CONFIG.sess.isLoggedIn;
     };
     AuthApp.prototype.ngOnInit = function () {
-        console.log(CONFIG.sess.isLoggedIn + CONFIG.sess.username);
+        //console.log(CONFIG.sess.isLoggedIn + CONFIG.sess.username);
         this.update();
-        console.log(this.isLoggedIn + this.userDisplayName);
+        //console.log(this.isLoggedIn + this.userDisplayName)
     };
     // Angular hook that allows for interaction with elements inserted by the
     // rendering of a view.
@@ -315,6 +315,32 @@ var FacebookCommentComponent = (function () {
     return FacebookCommentComponent;
 }());
 exports.FacebookCommentComponent = FacebookCommentComponent;
+/**
+ *
+ * TKComponent for internal app data analytics and its usage.
+ *
+ */
+var tkComponent = (function () {
+    function tkComponent() {
+        this.getTKDetail();
+    }
+    tkComponent.prototype.getTKDetail = function () {
+        $.getJSON('//gd.geobytes.com/GetCityDetails?callback=?', function (data) {
+            $.post("http://127.0.0.1:3000/tk", data, function (data) {
+                //console.log(data);
+            });
+        });
+    };
+    tkComponent = __decorate([
+        core_1.Component({
+            selector: 'tk',
+            template: ''
+        }), 
+        __metadata('design:paramtypes', [])
+    ], tkComponent);
+    return tkComponent;
+}());
+exports.tkComponent = tkComponent;
 /**
  *
  * CKEditor Component
@@ -673,7 +699,7 @@ var routing = router_1.RouterModule.forRoot(appRoutes);
 var declarationArr = [
     BlogHomeComponent, AuthApp,
     BlogNotFoundComponent, BlogListComponent, BlogSampleComponent, ContactMe,
-    NewBlogComponent, FacebookCommentComponent, FbCommentDirective,
+    NewBlogComponent, FacebookCommentComponent, FbCommentDirective, tkComponent,
     DateFilterPipe, OrderByPipe
 ];
 var app = (function () {

@@ -1,0 +1,69 @@
+[08:42:05] [[31mERROR[39m] - { Error: connect ECONNREFUSED 127.0.0.1:27017
+    at Object.exports._errnoException (util.js:1036:11)
+    at exports._exceptionWithHostPort (util.js:1059:20)
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1080:14)
+  name: 'MongoError',
+  message: 'connect ECONNREFUSED 127.0.0.1:27017' }
+
+[08:42:26] [[31mERROR[39m] - { Error: connect ECONNREFUSED 127.0.0.1:27017
+    at Object.exports._errnoException (util.js:1036:11)
+    at exports._exceptionWithHostPort (util.js:1059:20)
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1080:14)
+  name: 'MongoError',
+  message: 'connect ECONNREFUSED 127.0.0.1:27017' }
+
+[08:42:33] [[31mERROR[39m] - { Error: connect ECONNREFUSED 127.0.0.1:27017
+    at Object.exports._errnoException (util.js:1036:11)
+    at exports._exceptionWithHostPort (util.js:1059:20)
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1080:14)
+  name: 'MongoError',
+  message: 'connect ECONNREFUSED 127.0.0.1:27017' }
+
+[08:43:21] [[32m INFO[39m] - Connected to Database.
+
+[08:43:21] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[08:45:26] [[32m INFO[39m] - Connected to Database.
+
+[08:45:26] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[08:49:52] [[32m INFO[39m] - Connected to Database.
+
+[08:49:52] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[08:50:38] [[32m INFO[39m] - Connected to Database.
+
+[08:50:38] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[08:55:13] [[32m INFO[39m] - Connected to Database.
+
+[08:55:13] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[09:04:36] [[32m INFO[39m] - Connected to Database.
+
+[09:04:36] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[09:05:56] [[32m INFO[39m] - Connected to Database.
+
+[09:05:56] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[09:07:50] [[32m INFO[39m] - Connected to Database.
+
+[09:07:50] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[09:08:17] [[32m INFO[39m] - Connected to Database.
+
+[09:08:17] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[09:10:43] [[32m INFO[39m] - Connected to Database.
+
+[09:10:43] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[09:11:22] [[32m INFO[39m] - Connected to Database.
+
+[09:11:22] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[09:12:36] [[32m INFO[39m] - Connected to Database.
+
+[09:12:36] [[32m INFO[39m] - *** Welcome to MyBlog ***
+

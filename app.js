@@ -25,6 +25,8 @@ var NodeIndexRoute = require('./routes/NodeIndexRoute');
 var NodeBlogRoute = require('./routes/NodeBlogRoute');
 var NodeLoginRoute = require('./routes/NodeLoginRoute');
 var NodeUserRoute = require('./routes/NodeUserRoute');
+var NodeTKRoute = require('./routes/NodeTKRoute');
+
 
 //logger config
 var log4js = require('log4js');
@@ -143,6 +145,7 @@ app.use('/', NodeIndexRoute);
 app.use('/blog', NodeBlogRoute);
 app.use('/login', NodeLoginRoute);
 app.use('/user', NodeUserRoute);
+app.use('/tk', NodeTKRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
