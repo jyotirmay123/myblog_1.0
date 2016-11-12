@@ -57,8 +57,19 @@ var CONFIG = (function () {
     */
     function CONFIG() {
         // APPLICATION VERSION
-        this.__version__ = "1.1.3";
-        this._serverUrl = "http://127.0.0.1:3000";
+        /**
+         * Old Version details-->>>
+         * 1.0.0 : Initial app
+         * 1.0.1 : BackEnd Configured
+         * 1.0.2 : Database Configured and linked
+         * 1.1.0 : End to End setup with ckeditor configured.First blog saved and updated into DB and shown in UI.
+         * 1.2.0 : TKComponent Configured and linked
+         * 1.3.0 : nodemailer configured for mailing and notification purpose
+         *
+         *
+         */
+        this.__version__ = "1.3.0";
+        this._serverUrl = "https://warm-hamlet-28520.herokuapp.com";
         this._fbAPPID = 1834265296843281;
         this._fbSDKURL = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
         CONFIG.sess.isLoggedIn = localStorage.getItem("isLoggedIn") || false;
@@ -321,12 +332,13 @@ exports.FacebookCommentComponent = FacebookCommentComponent;
  *
  */
 var tkComponent = (function () {
-    function tkComponent() {
-        this.getTKDetail();
+    function tkComponent($config) {
+        this.$config = $config;
+        this.getTKDetail($config);
     }
-    tkComponent.prototype.getTKDetail = function () {
+    tkComponent.prototype.getTKDetail = function (config) {
         $.getJSON('//gd.geobytes.com/GetCityDetails?callback=?', function (data) {
-            $.post("http://127.0.0.1:3000/tk", data, function (data) {
+            $.post(config._serverUrl + '/tk', data, function (data) {
                 //console.log(data);
             });
         });
@@ -336,7 +348,7 @@ var tkComponent = (function () {
             selector: 'tk',
             template: ''
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [CONFIG])
     ], tkComponent);
     return tkComponent;
 }());

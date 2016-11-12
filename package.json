@@ -39,6 +39,7 @@
     "mongoose-validator": "~1.2.4",
     "morgan": "~1.6.1",
     "node-uuid": "~1.4.7",
+    "nodemailer": "^2.6.4",
     "nodemon": "^1.8.1",
     "passport": "~0.3.0",
     "proxy-agent": "~2.0.0",

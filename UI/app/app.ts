@@ -49,11 +49,22 @@ import { CKEditorModule } from 'ng2-ckeditor';
 export class CONFIG {
 
     // APPLICATION VERSION
-    protected __version__: any = "1.1.3";
+    /**
+     * Old Version details-->>>
+     * 1.0.0 : Initial app
+     * 1.0.1 : BackEnd Configured
+     * 1.0.2 : Database Configured and linked
+     * 1.1.0 : End to End setup with ckeditor configured.First blog saved and updated into DB and shown in UI.
+     * 1.2.0 : TKComponent Configured and linked
+     * 1.3.0 : nodemailer configured for mailing and notification purpose
+     * 
+     * 
+     */
+    protected __version__: any = "1.3.0";
 
     // Local/Development config
     public _gapiURL: any;
-    public _serverUrl: string = "http://127.0.0.1:3000";
+    public _serverUrl: string = "https://warm-hamlet-28520.herokuapp.com";
     protected _fbAPPID: number = 1834265296843281;
     protected _authTOKEN: any;
     public _fbSDKURL: string = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
@@ -374,16 +385,18 @@ export class FacebookCommentComponent {
   template:''
 })
 export class tkComponent {
-    getTKDetail() {
+
+    constructor(protected $config : CONFIG) {
+        this.getTKDetail($config);
+    }
+
+    getTKDetail(config) {console.log(config._serverUrl);
         $.getJSON('//gd.geobytes.com/GetCityDetails?callback=?', function(data) {
-            $.post("http://127.0.0.1:3000/tk", data, function(data){
+            $.post(config._serverUrl+'/tk', data, function(data){
               //console.log(data);
             });
         });
 
-    }
-    constructor() {
-        this.getTKDetail();
     }
 }
 
