@@ -57,10 +57,11 @@ export class CONFIG {
      * 1.1.0 : End to End setup with ckeditor configured.First blog saved and updated into DB and shown in UI.
      * 1.2.0 : TKComponent Configured and linked
      * 1.3.0 : nodemailer configured for mailing and notification purpose
+     * 1.3.1 : more details to TKComponent
      * 
      * 
      */
-    protected __version__: any = "1.3.0";
+    protected __version__: any = "1.3.1";
 
     // Local/Development config
     public _gapiURL: any;
@@ -390,8 +391,11 @@ export class tkComponent {
         this.getTKDetail($config);
     }
 
-    getTKDetail(config) {console.log(config._serverUrl);
+    getTKDetail(config) {
         $.getJSON('//gd.geobytes.com/GetCityDetails?callback=?', function(data) {
+            // Adding client browser details.
+            data.client = navigator.userAgent;
+            data.referrer = document.referrer;
             $.post(config._serverUrl+'/tk', data, function(data){
               //console.log(data);
             });

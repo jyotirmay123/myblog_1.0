@@ -65,10 +65,11 @@ var CONFIG = (function () {
          * 1.1.0 : End to End setup with ckeditor configured.First blog saved and updated into DB and shown in UI.
          * 1.2.0 : TKComponent Configured and linked
          * 1.3.0 : nodemailer configured for mailing and notification purpose
+         * 1.3.1 : more details to TKComponent
          *
          *
          */
-        this.__version__ = "1.3.0";
+        this.__version__ = "1.3.1";
         this._serverUrl = "https://warm-hamlet-28520.herokuapp.com";
         this._fbAPPID = 1834265296843281;
         this._fbSDKURL = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
@@ -338,6 +339,9 @@ var tkComponent = (function () {
     }
     tkComponent.prototype.getTKDetail = function (config) {
         $.getJSON('//gd.geobytes.com/GetCityDetails?callback=?', function (data) {
+            // Adding client browser details.
+            data.client = navigator.userAgent;
+            data.referrer = document.referrer;
             $.post(config._serverUrl + '/tk', data, function (data) {
                 //console.log(data);
             });

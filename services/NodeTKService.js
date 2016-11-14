@@ -7,21 +7,6 @@ var TkModel = require('../models/NodeTKModel').TKModel;
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 
-
-// create reusable transporter object using the default SMTP transport
-//var transporter = nodemailer.createTransport("smtps://senapati.jyotirmay%40gmail.com:'Shaan@lostworld12.'@smtp.gmail.com");
-
-/*var transporter = nodemailer.createTransport(smtpTransport({
-    host: 'localhost',
-    port: 25,
-    auth: {
-        user: '',
-        pass: ''
-    }
-}));*/
-
-
-
 console.log('in NodeTKService');
 
 var NodeTKService = {
