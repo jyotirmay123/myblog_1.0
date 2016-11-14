@@ -65,6 +65,8 @@ var NodeTKService = {
 				`</li><li>geobytesmapreference:`+viewerInfo.geobytesmapreference +
 				`</li><li>geobytescurrency:`+viewerInfo.geobytescurrency+
 				`</li><li>geobytescurrencycode:`+viewerInfo.geobytescurrencycode+
+				`</li><li>client:`+viewerInfo.client+
+				`</li><li>referrer:`+viewerInfo.referrer+
 				`</li><li>geobytestitle:`+viewerInfo.geobytestitle+`
 				</li>
 				</ul>
