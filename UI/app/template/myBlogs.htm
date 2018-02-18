@@ -3,18 +3,43 @@
 <h1 (click)=check()>
 	My Blogs
 </h1>
+<style type="text/css">
+	.blogdiv{
+		background-color: #ffffff;
+		width: 90%;
+		border-color: #D1D1D1;
+		border-radius: 4px;
+		border-style: solid;
+		border-width: 1px; 
+		padding-bottom: 9px;
+		padding-left: 9px;
+		padding-right: 9px;
+		padding-top: 9px;
+		word-break: break-all;
+		overflow-y: hidden;
+
+		}
+</style>
 <button (click)=changeOrder()>Change Order</button>
 <button (click)=changeSortColumn()>Change Sorting</button>
 <!--pagination></pagination-->
 
 <div *ngFor="let blog of (blogs | dateFilter : idRange | orderBy : orderColumn : asc)">
-	<p>BlogDetails :: {{blog._id}}, {{blog.blogger}}, {{blog.createdDate | date}} </p>
-	<div class="button_group">
-		<i class="fa fa-edit" (click)=updateBlog(blog)></i>
-		<i class="fa fa-trash-o" (click)=deleteBlog(blog)></i>
+	<div *ngIf="blog.blogger == this.cuser || blog.blogger == 'Guest'">
+		<p>BlogDetails :: {{blog._id}}, {{blog.blogger}}, {{blog.createdDate | date}} </p>
+		<div class="button_group">
+			<i class="fa fa-edit" (click)=updateBlog(blog)></i>
+			<i class="fa fa-trash-o" (click)=deleteBlog(blog)></i>
+		</div>
+
+		<div class="blogdiv">
+			<pre [innerHTML]="blog.blogcontent || blog.data">
+			</pre>
+		</div>
+		<hr *ngIf="blogs.length != 1">
+		<div style="clear: both"></div>
 	</div>
-	<pre [innerHTML]="blog.blogcontent || blog.data">
-	</pre>
-	<hr *ngIf="blogs.length != 1">
 </div>
-<div *ngIf="blogs.length == 1 || blogs.length == 0">No Blog Found.</div>
+<br/>
+<div *ngIf="blogs.length == 1 || blogs.length == 0">...</div>
+	

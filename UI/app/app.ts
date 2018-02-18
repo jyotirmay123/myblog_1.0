@@ -65,7 +65,7 @@ export class CONFIG {
 
     // Local/Development config
     public _gapiURL: any;
-    public _serverUrl: string = "https://warm-hamlet-28520.herokuapp.com";
+    public _serverUrl: string = "http://127.0.0.1:3004";
     protected _fbAPPID: number = 1834265296843281;
     protected _authTOKEN: any;
     public _fbSDKURL: string = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
@@ -105,6 +105,7 @@ export class MyBlogService {
     // Property to hold root server URL i.e host
     private serverUrl: string;
     private serviceUrl: string = '/blog';
+    public cuser: string = localStorage.getItem("username") || "Guest"
 
     constructor(private http: Http, protected $c: CONFIG) {
         this.serverUrl = $c._serverUrl;
@@ -153,8 +154,8 @@ export class MyBlogService {
     }
 
     // structure it so that databse will accept this to store i.e. here in our case modify the data to JSON.
-    prepareJSON(blog: any, _id: any = "", blogger: string = ""): any {
-        let payLoad = { _id: _id, blogcontent: blog, blogger: blogger || "Jyotirmay Senapati" };
+    prepareJSON(blog: any, _id: any = ""): any {
+        let payLoad = { _id: _id, blogcontent: blog, blogger: this.cuser };
         return payLoad;
     }
 }
@@ -423,6 +424,7 @@ export class NewBlogComponent {
     public blog: any;
     public blogId: any = 0;
     private subscription: Subscription;
+    public blogger = localStorage.getItem("username");
 
     constructor(protected myblogservice: MyBlogService, protected router: Router, protected route: ActivatedRoute) {
         if (!CONFIG.sess.isLoggedIn) {
@@ -450,6 +452,7 @@ export class NewBlogComponent {
             console.log("No Blog Entry. Please add Blog before submitting it");
             return;
         }
+        console.log(this.blogcontent)
         this.blog = this.myblogservice.prepareJSON(this.blogcontent);
         this.myblogservice.add(this.blog).subscribe(data => {
             this.isSuccess = true;
@@ -523,6 +526,7 @@ export class BlogListComponent {
     public idRange = { minRange: 0, maxRange: 100 };
     public orderColumn = '_id';
     public asc = false;
+    public cuser = localStorage.getItem("username");
 
     constructor(protected myblogservice: MyBlogService, protected router: Router, protected zone: NgZone) {
         if (!CONFIG.sess.isLoggedIn) {

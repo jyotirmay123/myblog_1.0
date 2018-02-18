@@ -10,6 +10,7 @@ console.log('in NodeBlogService');
 var NodeBlogService = {
 	// Save to blogSchema
 	save: function (blogDetails, next) {
+		console.log(blogDetails);
 		var blogModel = new BlogModel(blogDetails);
 		blogModel.save(function (err) {
 			if (err) {

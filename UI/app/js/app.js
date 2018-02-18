@@ -70,7 +70,7 @@ var CONFIG = (function () {
          *
          */
         this.__version__ = "1.3.1";
-        this._serverUrl = "https://warm-hamlet-28520.herokuapp.com";
+        this._serverUrl = "http://127.0.0.1:3004";
         this._fbAPPID = 1834265296843281;
         this._fbSDKURL = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.7&appId=' + this._fbAPPID;
         CONFIG.sess.isLoggedIn = localStorage.getItem("isLoggedIn") || false;
@@ -96,6 +96,7 @@ var MyBlogService = (function () {
         this.http = http;
         this.$c = $c;
         this.serviceUrl = '/blog';
+        this.cuser = localStorage.getItem("username") || "Guest";
         this.serverUrl = $c._serverUrl;
         //console.log(CONFIG.sess.isLoggedIn);
         //console.log(CONFIG.sess);
@@ -135,10 +136,9 @@ var MyBlogService = (function () {
             .map(function (response) { return response.json(); });
     };
     // structure it so that databse will accept this to store i.e. here in our case modify the data to JSON.
-    MyBlogService.prototype.prepareJSON = function (blog, _id, blogger) {
+    MyBlogService.prototype.prepareJSON = function (blog, _id) {
         if (_id === void 0) { _id = ""; }
-        if (blogger === void 0) { blogger = ""; }
-        var payLoad = { _id: _id, blogcontent: blog, blogger: blogger || "Jyotirmay Senapati" };
+        var payLoad = { _id: _id, blogcontent: blog, blogger: this.cuser };
         return payLoad;
     };
     MyBlogService = __decorate([
@@ -368,6 +368,7 @@ var NewBlogComponent = (function () {
         this.router = router;
         this.route = route;
         this.blogId = 0;
+        this.blogger = localStorage.getItem("username");
         if (!CONFIG.sess.isLoggedIn) {
             this.router.navigate(['blog/login']);
         }
@@ -390,6 +391,7 @@ var NewBlogComponent = (function () {
             console.log("No Blog Entry. Please add Blog before submitting it");
             return;
         }
+        console.log(this.blogcontent);
         this.blog = this.myblogservice.prepareJSON(this.blogcontent);
         this.myblogservice.add(this.blog).subscribe(function (data) {
             _this.isSuccess = true;
@@ -472,6 +474,7 @@ var BlogListComponent = (function () {
         this.idRange = { minRange: 0, maxRange: 100 };
         this.orderColumn = '_id';
         this.asc = false;
+        this.cuser = localStorage.getItem("username");
         if (!CONFIG.sess.isLoggedIn) {
             this.router.navigate(['blog/login']);
         }

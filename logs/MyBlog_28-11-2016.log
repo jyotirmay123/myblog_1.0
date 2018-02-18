@@ -1,0 +1,18 @@
+[17:02:16] [[31mERROR[39m] - { Error: getaddrinfo ENOTFOUND ds019866.mlab.com ds019866.mlab.com:19866
+    at errnoException (dns.js:28:10)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:76:26)
+  name: 'MongoError',
+  message: 'getaddrinfo ENOTFOUND ds019866.mlab.com ds019866.mlab.com:19866' }
+
+[17:02:28] [[32m INFO[39m] - Connected to Database.
+
+[17:02:28] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[17:03:21] [[32m INFO[39m] - Connected to Database.
+
+[17:03:21] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
+[17:03:29] [[32m INFO[39m] - Connected to Database.
+
+[17:03:29] [[32m INFO[39m] - *** Welcome to MyBlog ***
+
